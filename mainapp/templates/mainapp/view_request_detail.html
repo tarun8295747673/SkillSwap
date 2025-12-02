@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Service Request Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f7f9fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            border: none;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+        .section-title {
+            color: #333;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            Service Request Details
+        </div>
+        <div class="card-body">
+            <div class="mb-4">
+                <div class="section-title">🛠️ Service Info</div>
+                <p><strong>Service:</strong> {{ service_request.offer.title }}</p>
+                <p><strong>Requested Hours:</strong> {{ service_request.requested_hours }}</p>
+                <p><strong>Status:</strong> 
+                    {% if service_request.status == "Accepted" %}
+                        <span class="badge bg-success">Accepted</span>
+                    {% elif service_request.status == "Rejected" %}
+                        <span class="badge bg-danger">Rejected</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <hr>
+
+            <div class="mb-3">
+                <div class="section-title">🙋 Requester Profile</div>
+                <p><strong>Username:</strong> {{ service_request.requester.username }}</p>
+                <p><strong>Full Name:</strong> {{ requester_profile.full_name }}</p>
+                <p><strong>Phone Number:</strong> {{ requester_profile.phone_number }}</p>
+                <p><strong>Time Balance:</strong> <span class="text-success fw-bold">{{ requester_profile.time_balance }} hrs</span></p>
+            </div>
+
+            <a href="{% url 'dashboard' %}" class="btn btn-back mt-3">← Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

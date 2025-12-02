@@ -1,0 +1,167 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}My Profile - SkillSwap{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-12">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Profile Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-8 mb-8 shadow-2xl animate-fade-in">
+            <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
+                <!-- Avatar -->
+                <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center text-6xl font-bold text-blue-600 shadow-xl">
+                    {{ profile.full_name|slice:":1"|upper }}
+                </div>
+                
+                <!-- Info -->
+                <div class="flex-1 text-center md:text-left">
+                    <h1 class="text-4xl font-bold text-white mb-2">
+                        {{ profile.full_name|default:user.username }}
+                    </h1>
+                    <p class="text-blue-100 text-lg mb-4">
+                        <i class="fas fa-user mr-2"></i>@{{ user.username }}
+                    </p>
+                    <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+                        <span class="bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm">
+                            <i class="fas fa-clock mr-2"></i>{{ real_balance }} hours balance
+                        </span>
+                        <span class="bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm">
+                            <i class="fas fa-calendar mr-2"></i>Member since {{ user.date_joined|date:"M Y" }}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Edit Button -->
+                <div>
+                    <a 
+                        href="{% url 'edit_profile' %}"
+                        class="inline-block bg-white text-blue-600 px-6 py-3 rounded-xl font-medium hover:bg-blue-50 transition-colors shadow-lg"
+                    >
+                        <i class="fas fa-edit mr-2"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Details -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-slide-up">
+            
+            <!-- Personal Information Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 card-shadow">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                    <i class="fas fa-id-card text-blue-600 mr-3"></i>
+                    Personal Information
+                </h2>
+                
+                <div class="space-y-4">
+                    <!-- Full Name -->
+                    <div class="flex items-start">
+                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-blue-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Full Name</p>
+                            <p class="text-lg font-medium text-gray-900 dark:text-white">
+                                {{ profile.full_name|default:"Not set" }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="flex items-start">
+                        <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-envelope text-purple-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Email Address</p>
+                            <p class="text-lg font-medium text-gray-900 dark:text-white">
+                                {{ profile.email|default:"Not set" }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Phone -->
+                    <div class="flex items-start">
+                        <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-phone text-green-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Phone Number</p>
+                            <p class="text-lg font-medium text-gray-900 dark:text-white">
+                                {{ profile.phone_number|default:"Not set" }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Stats Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 card-shadow">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                    <i class="fas fa-chart-line text-green-600 mr-3"></i>
+                    Account Statistics
+                </h2>
+                
+                <div class="space-y-4">
+                    <!-- Time Balance -->
+                    <div class="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900 dark:to-blue-900 rounded-xl p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Current Time Balance</p>
+                                <p class="text-3xl font-bold text-green-600">{{ real_balance }} hrs</p>
+                            </div>
+                            <div class="w-16 h-16 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center">
+                                <i class="fas fa-coins text-green-600 text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Services Offered -->
+                    <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-briefcase text-blue-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Services Offered</p>
+                                <p class="text-xl font-bold text-gray-900 dark:text-white">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Services Requested -->
+                    <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-hand-paper text-purple-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Services Requested</p>
+                                <p class="text-xl font-bold text-gray-900 dark:text-white">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="mt-8 flex flex-col sm:flex-row gap-4">
+            <a 
+                href="{% url 'dashboard' %}"
+                class="flex-1 bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors text-center shadow-lg"
+            >
+                <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+            </a>
+            <a 
+                href="{% url 'edit_profile' %}"
+                class="flex-1 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition-opacity text-center shadow-lg"
+            >
+                <i class="fas fa-edit mr-2"></i>Edit Profile
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,339 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}Dashboard - SkillSwap{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Welcome Header -->
+        <div class="mb-8 animate-fade-in">
+            <div class="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
+                <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
+                <div class="relative flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <div>
+                        <h1 class="text-4xl font-bold mb-2">
+                            <span id="greeting">Welcome</span>, {{ user.username }}! 👋
+                        </h1>
+                        <p class="text-purple-100">Ready to exchange some skills today?</p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <div class="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-4 text-center border border-white/30">
+                            <p class="text-sm text-purple-100 mb-1">Your Time Balance</p>
+                            <p class="text-4xl font-bold {% if total_balance >= 0 %}text-yellow-300{% else %}text-red-300{% endif %}">
+                                {{ total_balance }} hrs
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages Alert -->
+        {% if messages %}
+            <div class="mb-6 space-y-3 animate-slide-up">
+                {% for message in messages %}
+                    <div class="bg-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-50 dark:bg-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-900 border-l-4 border-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-500 p-4 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %} text-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-500 mr-3"></i>
+                            <p class="text-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-700 dark:text-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-200">{{ message }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+    <!-- Step 4: Incoming Requests for Your Services -->
+    <div class="card p-3 mb-4">
+        <h4 class="text-warning">Incoming Requests for Your Services</h4>
+        {% for request in incoming_requests %}
+            <div class="mb-2">
+                <strong>{{ request.requester.username }}</strong> wants your service: <strong>{{ request.offer.title }}</strong><br>
+                Requested Hours: {{ request.requested_hours }}<br>
+                Status: {{ request.status }}
+
+                {% if request.status == "Pending" %}
+
+                 {% if request.id %}
+        <a href="{% url 'view_request_detail' request.id %}" class="btn btn-info btn-sm">View Details</a>
+                 {% endif %}
+                <form method="post" action="{% url 'respond_request' request.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="response" value="accept">
+                    <button class="btn btn-sm btn-success">Accept</button>
+                </form>
+                <form method="post" action="{% url 'respond_request' request.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="response" value="reject">
+                    <button class="btn btn-sm btn-danger">Reject</button>
+                </form>
+                {% endif %}
+            </div>
+            <hr>
+        {% empty %}
+            <p>No incoming requests yet.</p>
+        {% endfor %}
+    </div>
+
+    
+
+    <div class="row mb-4">
+        <!-- Service Offers -->
+        <div class="col-md-6">
+            <div class="card p-3">
+                <h4 class="text-primary">Your Service Offers</h4>
+                {% for offer in offer_service %}
+                    <div class="mb-2">
+                        <strong>{{ offer.title }}</strong><br>
+                        ID: {{ offer.id }}<br>
+                        Category: {{ offer.category.category_name }}<br>
+                        Available Hours: {{ offer.available_hours }}<br>
+                        Description: {{ offer.description }}
+                    </div>
+                    <hr>
+                {% empty %}
+                    <p>No services offered yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Service Requests -->
+        <div class="col-md-6">
+            <div class="card p-3">
+                <h4 class="text-success">Your Service Requests</h4>
+                {% for request in service_request %}
+                    <div class="mb-2">
+                        <strong>{{ request.offer.title }}</strong><br>
+                        Provider: {{ request.offer.user.username }}<br>
+                        Requested Hours: {{ request.requested_hours }}<br>
+                        Status: {{ request.status|default:"Pending" }}
+                        <form action="{% url 'delete_request' request.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger mt-1">Delete</button>
+                        </form>
+                    </div>
+                    <hr>
+                {% empty %}
+                    <p>No service requests yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <!-- ✅ INBOX / RECEIVED MESSAGES -->
+<div class="card p-3 mb-4">
+    <h4 class="text-primary">📩 Inbox - Messages from Users</h4>
+    {% for msg in received_messages %}
+        <div class="mb-2">
+            <strong>From:</strong> {{ msg.sender.username }}<br>
+            <strong>Message:</strong> {{ msg.content }}<br>
+            <small class="text-muted">Received at: {{ msg.timestamp|date:"d M Y, h:i A" }}</small>
+        </div>
+        <hr>
+    {% empty %}
+        <p>No messages yet.</p>
+    {% endfor %}
+</div>
+
+
+    <!-- <div class="card p-3 my-3 shadow">
+    <h4>User Profile</h4>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item"><strong>Full Name:</strong> {{ profile.full_name }}</li>
+        <li class="list-group-item"><strong>Email:</strong> {{ profile.user.email }}</li>
+        <li class="list-group-item"><strong>Phone:</strong> {{ profile.phone_number }}</li>
+        <li class="list-group-item"><strong>Time Balance:</strong> {{ profile.time_balance }} hours</li>
+    </ul>
+</div> -->
+
+
+    <!-- Transactions -->
+    <div class="card p-3 mb-4">
+        <h4 class="text-secondary">Your Time Transactions</h4>
+        <ul class="list-group mb-2">
+            {% for entry in time_entries %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>
+                            {% if "Login Bonus" in entry.description %}
+                                🎁 <span class="text-success">Login Bonus</span>
+                            {% else %}
+                                {{ entry.description }}
+                            {% endif %}
+                        </strong><br>
+                        <small class="text-muted">On {{ entry.timestamp|date:"d M Y, h:i A" }}</small>
+                    </div>
+                    {% if entry.hours < 0 %}
+                        <span class="badge bg-danger">{{ entry.hours }} hrs</span>
+                    {% else %}
+                        <span class="badge bg-success">+{{ entry.hours }} hrs</span>
+                    {% endif %}
+                </li>
+            {% empty %}
+                <li class="list-group-item">No transactions yet.</li>
+            {% endfor %}
+        </ul>
+
+        <h6 class="text-end mt-2">
+            <strong>Total Balance:</strong>
+            {% if total_balance < 0 %}
+                <span class="text-danger">{{ total_balance }} hours</span>
+            {% else %}
+                <span class="text-success">{{ total_balance }} hours</span>
+            {% endif %}
+        </h6>
+    </div>
+
+    <!-- 📨 INBOX Section (Add this wherever needed in your dashboard) -->
+<div class="card p-3 my-4">
+    <h4 class="text-dark">📥 Your Inbox</h4>
+    {% for msg in received_messages %}
+        <div class="border rounded p-2 mb-3">
+            <strong>From:</strong> {{ msg.sender.username }}<br>
+            <strong>Message:</strong> {{ msg.content }}<br>
+            <small class="text-muted">Received on {{ msg.timestamp|date:"d M Y, h:i A" }}</small>
+
+            <!-- ✅ Reply Form -->
+            <form method="post" action="{% url 'send_message' msg.sender.id %}" class="mt-2">
+                {% csrf_token %}
+                <div class="input-group">
+                    <input type="text" name="content" class="form-control form-control-sm" placeholder="Reply to {{ msg.sender.username }}" required>
+                    <button type="submit" class="btn btn-sm btn-outline-success">Reply</button>
+                </div>
+            </form>
+        </div>
+    {% empty %}
+        <p>No messages received yet.</p>
+    {% endfor %}
+</div>
+
+
+    <!-- Browse Available Services -->
+    <div class="card p-3">
+        <h4 class="text-info">Browse Available Services</h4>
+        {% for offer in available_offers %}
+
+        {% if offer.user.id %}
+<form method="post" action="{% url 'send_message' offer.user.id %}" class="d-flex mt-2">
+    {% csrf_token %}
+    <input type="text" name="content" class="form-control form-control-sm me-2" placeholder="Ask before requesting..." required>
+    <button type="submit" class="btn btn-sm btn-outline-info">Message</button>
+</form>
+{% endif %}
+
+
+
+
+            <div class="mb-3">
+                <strong>{{ offer.title }}</strong><br>
+                Offer ID: {{ offer.id }}<br>
+                Category: {{ offer.category.category_name }}<br>
+                Provider: {{ offer.user.username }}<br>
+                Available Hours: {{ offer.available_hours }}<br>
+                <form method="post" action="{% url 'request_service' offer.id %}">
+                    {% csrf_token %}
+                    <div class="input-group mt-2 mb-2" style="max-width: 300px;">
+                        <input type="number" name="requested_hours" step="0.25" min="0.25" max="{{ offer.available_hours }}" class="form-control" placeholder="Enter hours" required>
+                        <button type="submit" class="btn btn-sm btn-primary">Request</button>
+                    </div>
+                </form>
+            </div>
+            <hr>
+        {% empty %}
+            <p>No available services from others.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Include Confetti Library -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+    function launchAnimatedConfetti() {
+        var duration = 2 * 1000; // 2 seconds
+        var animationEnd = Date.now() + duration;
+        var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        var interval = setInterval(function () {
+            var timeLeft = animationEnd - Date.now();
+
+            if (timeLeft <= 0) {
+                return clearInterval(interval);
+            }
+
+            var particleCount = 5 * (timeLeft / duration);
+
+            confetti(Object.assign({}, defaults, {
+                particleCount,
+                origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+            }));
+            confetti(Object.assign({}, defaults, {
+                particleCount,
+                origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+            }));
+        }, 200);
+    }
+
+    function greetUserWithVoice() {
+        const username = "{{ user.username }}";
+        const hours = new Date().getHours();
+        let greeting = "Welcome back";
+
+        if (hours < 12) {
+            greeting = "Good morning";
+        } else if (hours < 18) {
+            greeting = "Good afternoon";
+        } else {
+            greeting = "Good evening";
+        }
+
+        const message = new SpeechSynthesisUtterance(`${greeting}, ${username}`);
+        message.pitch = 1.1;
+        message.rate = 1;
+        message.volume = 1;
+        window.speechSynthesis.speak(message);
+    }
+
+    window.onload = function () {
+        if (!localStorage.getItem("greeted_once")) {
+            launchAnimatedConfetti();     // 🎉 Confetti
+            greetUserWithVoice();         // 🔊 Greeting
+            localStorage.setItem("greeted_once", "true");
+        }
+    };
+
+    
+</script>
+<script>
+function openAssistant() {
+    document.getElementById('assistantBox').style.display = 'block';
+}
+function closeAssistant() {
+    document.getElementById('assistantBox').style.display = 'none';
+}
+function processAssistant() {
+    const q = document.getElementById("assistantInput").value.toLowerCase();
+    const r = document.getElementById("assistantResponse");
+
+    if (q.includes("offer")) {
+        r.innerHTML = "👉 Go to 'Offer Service' page, fill the form, and submit your service.";
+    } else if (q.includes("request")) {
+        r.innerHTML = "📩 Visit 'Browse Services' → select any service → request with hours.";
+    } else if (q.includes("balance")) {
+        r.innerHTML = "💰 Your current balance is shown at the top center of the dashboard.";
+    } else if (q.includes("profile")) {
+        r.innerHTML = "🧑 Go to 'User Profile' to update your details.";
+    } else if (q.includes("logout")) {
+        r.innerHTML = "🚪 Click the red logout button on the top right.";
+    } else {
+        r.innerHTML = "🤔 Sorry, I didn’t understand that. Try asking: offer, request, balance, profile...";
+    }
+}
+</script>
+{% endblock %}

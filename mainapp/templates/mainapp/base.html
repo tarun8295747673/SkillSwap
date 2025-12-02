@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" :class="{ 'dark': darkMode }">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SkillSwap - Exchange Skills, Build Community{% endblock %}</title>
+    <meta name="description" content="Join SkillSwap to exchange skills, connect with your community, and build meaningful relationships through time-based skill sharing.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🔄</text></svg>">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Alpine.js for interactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#fdf4ff',
+                            100: '#fae8ff',
+                            200: '#f5d0fe',
+                            300: '#f0abfc',
+                            400: '#e879f9',
+                            500: '#d946ef',
+                            600: '#c026d3',
+                            700: '#a21caf',
+                            800: '#86198f',
+                            900: '#701a75',
+                        },
+                        accent: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @keyframes slideInFromTop {
+            0% { transform: translateY(-100%); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .animate-slide-in { animation: slideInFromTop 0.5s ease-out; }
+        .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+        .animate-slide-up { animation: slideUp 0.6s ease-out; }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .gradient-blue {
+            background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .card-shadow:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* Dark mode scrollbar */
+        .dark ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        
+        .dark ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    
+    <!-- Navigation Bar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50 animate-slide-in" x-data="{ mobileMenuOpen: false }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center space-x-2 group">
+                        <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300">
+                            <i class="fas fa-sync-alt text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">
+                            SkillSwap
+                        </span>
+                    </a>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden lg:flex items-center space-x-2">
+                    {% if user.is_authenticated %}
+                        <!-- Search Bar -->
+                        <div class="relative mr-2" x-data="{ searchFocus: false }">
+                            <input type="text" 
+                                   placeholder="Search skills..." 
+                                   @focus="searchFocus = true" 
+                                   @blur="setTimeout(() => searchFocus = false, 200)"
+                                   class="pl-10 pr-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 border-0 focus:ring-2 focus:ring-purple-500 w-48 focus:w-64 transition-all duration-300">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </div>
+                        
+                        <a href="{% url 'dashboard' %}" class="px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <i class="fas fa-home mr-1"></i>Dashboard
+                        </a>
+                        <a href="{% url 'available_services' %}" class="px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <i class="fas fa-store mr-1"></i>Browse
+                        </a>
+                        <a href="{% url 'offer_service' %}" class="px-3 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all">
+                            <i class="fas fa-plus mr-1"></i>Offer
+                        </a>
+                        
+                        <!-- Notifications Dropdown -->
+                        <div class="relative" x-data="{ notifOpen: false }">
+                            <button @click="notifOpen = !notifOpen" class="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <i class="fas fa-bell text-xl"></i>
+                                <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                            </button>
+                            
+                            <!-- Notification Dropdown -->
+                            <div x-show="notifOpen" 
+                                 @click.away="notifOpen = false"
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 transform scale-95"
+                                 x-transition:enter-end="opacity-100 transform scale-100"
+                                 class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+                                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                                    <h3 class="font-bold text-lg">Notifications</h3>
+                                </div>
+                                <div class="max-h-96 overflow-y-auto">
+                                    <a href="#" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700">
+                                        <div class="flex items-start">
+                                            <div class="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mr-3">
+                                                <i class="fas fa-check text-green-600"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-sm font-medium">Request Accepted</p>
+                                                <p class="text-xs text-gray-500 mt-1">John accepted your service request</p>
+                                                <p class="text-xs text-gray-400 mt-1">2 hours ago</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700">
+                                        <div class="flex items-start">
+                                            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
+                                                <i class="fas fa-message text-blue-600"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-sm font-medium">New Message</p>
+                                                <p class="text-xs text-gray-500 mt-1">Sarah sent you a message</p>
+                                                <p class="text-xs text-gray-400 mt-1">5 hours ago</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <div class="flex items-start">
+                                            <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
+                                                <i class="fas fa-star text-purple-600"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-sm font-medium">New Review</p>
+                                                <p class="text-xs text-gray-500 mt-1">You received a 5-star review!</p>
+                                                <p class="text-xs text-gray-400 mt-1">1 day ago</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="p-3 bg-gray-50 dark:bg-gray-700 text-center">
+                                    <a href="#" class="text-sm text-purple-600 hover:text-purple-700 font-medium">View all notifications</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Dark Mode Toggle -->
+                        <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)" 
+                                class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <i class="fas text-lg" :class="darkMode ? 'fa-sun text-yellow-400' : 'fa-moon text-purple-600'"></i>
+                        </button>
+                        
+                        <!-- User Avatar Dropdown -->
+                        <div class="relative" x-data="{ userMenuOpen: false }">
+                            <button @click="userMenuOpen = !userMenuOpen" class="flex items-center space-x-2 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <div class="w-9 h-9 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
+                                    {{ user.username|first|upper }}
+                                </div>
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </button>
+                            
+                            <!-- User Menu Dropdown -->
+                            <div x-show="userMenuOpen" 
+                                 @click.away="userMenuOpen = false"
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 transform scale-95"
+                                 x-transition:enter-end="opacity-100 transform scale-100"
+                                 class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+                                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                                    <p class="font-bold">{{ user.username }}</p>
+                                    <p class="text-xs text-gray-500">{{ user.email }}</p>
+                                </div>
+                                <div class="py-2">
+                                    <a href="{% url 'user_profile' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <i class="fas fa-user w-5"></i>
+                                        <span class="ml-2">My Profile</span>
+                                    </a>
+                                    <a href="#" class="flex items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <i class="fas fa-cog w-5"></i>
+                                        <span class="ml-2">Settings</span>
+                                    </a>
+                                    <a href="#" class="flex items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <i class="fas fa-chart-line w-5"></i>
+                                        <span class="ml-2">My Stats</span>
+                                    </a>
+                                    <a href="#" class="flex items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <i class="fas fa-question-circle w-5"></i>
+                                        <span class="ml-2">Help Center</span>
+                                    </a>
+                                </div>
+                                <div class="border-t border-gray-200 dark:border-gray-700 p-2">
+                                    <form action="{% url 'logout' %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="w-full flex items-center px-4 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
+                                            <i class="fas fa-sign-out-alt w-5"></i>
+                                            <span class="ml-2">Logout</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="/" class="px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <i class="fas fa-home mr-2"></i>Home
+                        </a>
+                        <a href="#features" class="px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            Features
+                        </a>
+                        <a href="#how-it-works" class="px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            How It Works
+                        </a>
+                        <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)" 
+                                class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <i class="fas" :class="darkMode ? 'fa-sun text-yellow-400' : 'fa-moon text-purple-600'"></i>
+                        </button>
+                        <a href="{% url 'login' %}" class="px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Login
+                        </a>
+                        <a href="{% url 'register' %}" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg">
+                            <i class="fas fa-user-plus mr-2"></i>Sign Up Free
+                        </a>
+                    {% endif %}
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div x-show="mobileMenuOpen" 
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 transform scale-95"
+             x-transition:enter-end="opacity-100 transform scale-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 transform scale-100"
+             x-transition:leave-end="opacity-0 transform scale-95"
+             class="md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="{% url 'available_services' %}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-store mr-2"></i>Browse Services
+                    </a>
+                    <a href="{% url 'offer_service' %}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-plus-circle mr-2"></i>Offer Service
+                    </a>
+                    <a href="{% url 'user_profile' %}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-user mr-2"></i>Profile
+                    </a>
+                    <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)" 
+                            class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
+                        <span x-text="darkMode ? ' Light Mode' : ' Dark Mode'"></span>
+                    </button>
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full text-left px-3 py-2 text-red-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="/" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                    <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)" 
+                            class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
+                        <span x-text="darkMode ? ' Light Mode' : ' Dark Mode'"></span>
+                    </button>
+                    <a href="{% url 'login' %}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Login
+                    </a>
+                    <a href="{% url 'register' %}" class="block px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-user-plus mr-2"></i>Sign Up
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gradient-to-br from-gray-900 to-gray-800 text-white mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-sync-alt text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">SkillSwap</span>
+                    </div>
+                    <p class="text-gray-300 mb-4 max-w-md">
+                        Join thousands of community members exchanging skills and building meaningful connections. Your time is valuable — share it, grow it, multiply it.
+                    </p>
+                    <div class="flex space-x-3">
+                        <a href="#" class="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all">
+                            <i class="fab fa-youtube text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold mb-4 text-lg">Quick Links</h3>
+                    <ul class="space-y-3 text-gray-300">
+                        <li><a href="/" class="hover:text-purple-400 transition-colors flex items-center"><i class="fas fa-chevron-right text-xs mr-2"></i>Home</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors flex items-center"><i class="fas fa-chevron-right text-xs mr-2"></i>About Us</a></li>
+                        <li><a href="#how-it-works" class="hover:text-purple-400 transition-colors flex items-center"><i class="fas fa-chevron-right text-xs mr-2"></i>How It Works</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors flex items-center"><i class="fas fa-chevron-right text-xs mr-2"></i>Blog</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors flex items-center"><i class="fas fa-chevron-right text-xs mr-2"></i>Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-bold mb-4 text-lg">Resources</h3>
+                    <ul class="space-y-3 text-gray-300">
+                        <li><a href="#" class="hover:text-purple-400 transition-colors flex items-center"><i class="fas fa-chevron-right text-xs mr-2"></i>FAQ</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors flex items-center"><i class="fas fa-chevron-right text-xs mr-2"></i>Help Center</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors flex items-center"><i class="fas fa-chevron-right text-xs mr-2"></i>Community Guidelines</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors flex items-center"><i class="fas fa-chevron-right text-xs mr-2"></i>Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors flex items-center"><i class="fas fa-chevron-right text-xs mr-2"></i>Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-10 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm mb-4 md:mb-0">
+                        &copy; 2025 SkillSwap. All rights reserved. Built with <i class="fas fa-heart text-pink-500 animate-pulse"></i> for the community.
+                    </p>
+                    <div class="flex items-center space-x-4 text-sm text-gray-400">
+                        <a href="#" class="hover:text-purple-400 transition-colors">Status</a>
+                        <span>•</span>
+                        <a href="#" class="hover:text-purple-400 transition-colors">API</a>
+                        <span>•</span>
+                        <a href="#" class="hover:text-purple-400 transition-colors">Sitemap</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

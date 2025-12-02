@@ -1,0 +1,147 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}Browse Skills - SkillSwap{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="mb-10 animate-fade-in">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                    <i class="fas fa-store text-blue-600 mr-3"></i>
+                    Browse Available Services
+                </h1>
+                <p class="text-xl text-gray-600 dark:text-gray-400">
+                    Discover services offered by our community members
+                </p>
+            </div>
+            
+            <!-- Stats -->
+            <div class="mt-8 flex justify-center items-center space-x-8">
+                <div class="text-center">
+                    <p class="text-3xl font-bold text-blue-600">{{ offers|length }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Services Available</p>
+                </div>
+                <div class="w-px h-12 bg-gray-300 dark:bg-gray-700"></div>
+                <div class="text-center">
+                    <p class="text-3xl font-bold text-purple-600">{{ offers|length|add:"-1" }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Active Providers</p>
+                </div>
+            </div>
+        </div>
+
+        {% if offers %}
+            <!-- Services Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-slide-up">
+                {% for offer in offers %}
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 card-shadow hover-scale transition-all">
+                        <!-- Category Badge -->
+                        <div class="flex items-start justify-between mb-4">
+                            <span class="bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-full text-xs font-medium">
+                                <i class="fas fa-tag mr-1"></i>{{ offer.category.category_name }}
+                            </span>
+                            <span class="text-gray-400 text-xs">#{{ offer.id }}</span>
+                        </div>
+
+                        <!-- Title -->
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                            {{ offer.title }}
+                        </h3>
+
+                        <!-- Description -->
+                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-3">
+                            {{ offer.description }}
+                        </p>
+
+                        <!-- Provider Info -->
+                        <div class="flex items-center space-x-3 mb-4 pb-4 border-b dark:border-gray-700">
+                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                                {{ offer.user.username|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ offer.user.username }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Service Provider</p>
+                            </div>
+                        </div>
+
+                        <!-- Available Hours -->
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center text-gray-700 dark:text-gray-300">
+                                <i class="fas fa-clock text-green-600 mr-2"></i>
+                                <span class="font-medium">{{ offer.available_hours }} hours</span>
+                            </div>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">available</span>
+                        </div>
+
+                        <!-- Request Form -->
+                        <form method="post" action="{% url 'request_service' offer.id %}" class="mb-3">
+                            {% csrf_token %}
+                            <div class="flex space-x-2">
+                                <div class="flex-1">
+                                    <input 
+                                        type="number" 
+                                        name="requested_hours" 
+                                        step="0.25" 
+                                        min="0.25" 
+                                        max="{{ offer.available_hours }}" 
+                                        class="w-full px-3 py-2 border dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" 
+                                        placeholder="Hours needed" 
+                                        required
+                                    >
+                                </div>
+                                <button 
+                                    type="submit"
+                                    class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+                                >
+                                    <i class="fas fa-paper-plane mr-1"></i>Request
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Contact Button -->
+                        <a 
+                            href="#" 
+                            class="block w-full text-center px-4 py-2 border-2 border-blue-600 text-blue-600 dark:border-blue-500 dark:text-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors font-medium text-sm"
+                        >
+                            <i class="fas fa-envelope mr-2"></i>Contact Provider
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Back to Dashboard -->
+            <div class="mt-12 text-center">
+                <a 
+                    href="{% url 'dashboard' %}"
+                    class="inline-block px-8 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                </a>
+            </div>
+
+        {% else %}
+            <!-- Empty State -->
+            <div class="text-center py-20">
+                <div class="w-32 h-32 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-store-slash text-gray-400 dark:text-gray-500 text-6xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                    No Services Available Yet
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
+                    Be the first to offer a service to the community and start building your time bank!
+                </p>
+                <a 
+                    href="{% url 'offer_service' %}"
+                    class="inline-block px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:opacity-90 transform hover:scale-105 transition-all duration-300 shadow-lg"
+                >
+                    <i class="fas fa-plus-circle mr-2"></i>Offer Your First Service
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

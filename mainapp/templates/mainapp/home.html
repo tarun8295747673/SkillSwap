@@ -1,0 +1,465 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}SkillSwap - Exchange Skills, Build Community{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Advanced Animations -->
+<section class="relative overflow-hidden bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 text-white">
+    <div class="absolute inset-0 bg-black opacity-30"></div>
+    
+    <!-- Animated Background Blobs -->
+    <div class="absolute top-0 left-0 w-96 h-96 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+    <div class="absolute top-0 right-0 w-96 h-96 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+    <div class="absolute bottom-0 left-20 w-96 h-96 bg-orange-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+    
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
+        <div class="text-center animate-fade-in">
+            <!-- Online Members Badge -->
+            <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+                <span class="relative flex h-3 w-3 mr-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                </span>
+                <span class="text-sm font-medium">2,547 active members online</span>
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
+                Welcome to <span class="text-yellow-300 relative inline-block">
+                    SkillSwap
+                    <svg class="absolute -bottom-2 w-full" height="12" viewBox="0 0 200 12" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 6 Q50 12, 100 6 T200 6" stroke="currentColor" stroke-width="3" fill="none" class="text-yellow-300"/>
+                    </svg>
+                </span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-gray-100 leading-relaxed">
+                Exchange skills, share knowledge, and build meaningful connections in your community — all without spending a penny!
+            </p>
+            
+            <!-- Quick Stats Bar -->
+            <div class="flex flex-wrap justify-center gap-6 mb-10">
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl px-6 py-3">
+                    <div class="text-2xl font-bold">15K+</div>
+                    <div class="text-sm text-gray-200">Skills Shared</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl px-6 py-3">
+                    <div class="text-2xl font-bold">8K+</div>
+                    <div class="text-sm text-gray-200">Active Members</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl px-6 py-3">
+                    <div class="text-2xl font-bold">50K+</div>
+                    <div class="text-sm text-gray-200">Hours Exchanged</div>
+                </div>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="{% url 'register' %}" class="group px-8 py-4 bg-yellow-400 text-gray-900 rounded-full font-bold text-lg hover:bg-yellow-300 transform hover:scale-105 transition-all duration-300 shadow-2xl flex items-center">
+                    <i class="fas fa-rocket mr-2 group-hover:animate-bounce"></i>
+                    Start Swapping Free
+                    <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                </a>
+                <button onclick="playVideoDemo()" class="px-8 py-4 bg-white/20 backdrop-blur-sm border-2 border-white rounded-full font-bold text-lg hover:bg-white/30 transition-all duration-300 flex items-center">
+                    <i class="fas fa-play-circle mr-2"></i>Watch Demo
+                    <span class="ml-2 text-sm bg-white/20 px-2 py-1 rounded-full">2:30</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Animated Wave -->
+    <div class="absolute bottom-0 w-full">
+        <svg viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#f9fafb" fill-opacity="1" d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,58.7C960,64,1056,64,1152,58.7C1248,53,1344,43,1392,37.3L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-16 bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-4xl font-bold text-center mb-12 animate-slide-up">
+            <i class="fas fa-chart-line bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mr-3"></i>SkillSwap in Action
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Stat Card 1 -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 text-center card-shadow animate-slide-up" style="animation-delay: 0.1s">
+                <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-users text-blue-600 text-3xl"></i>
+                </div>
+                <h3 class="text-5xl font-bold text-blue-600 mb-2" id="userCount">0</h3>
+                <p class="text-gray-600 dark:text-gray-400 font-medium">Registered Users</p>
+            </div>
+            
+            <!-- Stat Card 2 -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 text-center card-shadow animate-slide-up" style="animation-delay: 0.2s">
+                <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-clock text-purple-600 text-3xl"></i>
+                </div>
+                <h3 class="text-5xl font-bold text-purple-600 mb-2" id="hoursExchanged">0</h3>
+                <p class="text-gray-600 dark:text-gray-400 font-medium">Hours Exchanged</p>
+            </div>
+            
+            <!-- Stat Card 3 -->
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 text-center card-shadow animate-slide-up" style="animation-delay: 0.3s">
+                <div class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-handshake text-green-600 text-3xl"></i>
+                </div>
+                <h3 class="text-5xl font-bold text-green-600 mb-2" id="activeServices">0</h3>
+                <p class="text-gray-600 dark:text-gray-400 font-medium">Active Services</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Key Features Section -->
+<section class="py-20 bg-white dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                <i class="fas fa-star text-yellow-500 mr-3"></i>Platform Features
+            </h2>
+            <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                A time-based service exchange platform built to foster community collaboration and mutual support
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Feature: User Registration & Profiles -->
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-8 card-shadow hover:shadow-2xl transition-all duration-300 border-l-4 border-blue-500">
+                <div class="flex items-start mb-4">
+                    <div class="w-14 h-14 bg-blue-500 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-user-circle text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">User Registration & Profiles</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Showcase skills and availability with detailed user profiles</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature: Service Listing & Search -->
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-8 card-shadow hover:shadow-2xl transition-all duration-300 border-l-4 border-purple-500">
+                <div class="flex items-start mb-4">
+                    <div class="w-14 h-14 bg-purple-500 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-search text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Service Listing & Search</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Easy discovery of skills and requests within the community</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature: Booking & Scheduling -->
+            <div class="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-8 card-shadow hover:shadow-2xl transition-all duration-300 border-l-4 border-green-500">
+                <div class="flex items-start mb-4">
+                    <div class="w-14 h-14 bg-green-500 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-calendar-check text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Booking & Scheduling</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Manage service exchanges seamlessly with smart scheduling</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature: Credit/Hour System -->
+            <div class="bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-8 card-shadow hover:shadow-2xl transition-all duration-300 border-l-4 border-orange-500">
+                <div class="flex items-start mb-4">
+                    <div class="w-14 h-14 bg-orange-500 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-coins text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Credit/Hour System</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Exchange services using time as the only currency — fair and equal</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature: Feedback & Ratings -->
+            <div class="bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-8 card-shadow hover:shadow-2xl transition-all duration-300 border-l-4 border-yellow-500">
+                <div class="flex items-start mb-4">
+                    <div class="w-14 h-14 bg-yellow-500 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-star text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Feedback & Ratings</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Build trust and reliability among users with transparent reviews</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature: Sharing Economy -->
+            <div class="bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-8 card-shadow hover:shadow-2xl transition-all duration-300 border-l-4 border-teal-500">
+                <div class="flex items-start mb-4">
+                    <div class="w-14 h-14 bg-teal-500 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-hands-helping text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Sharing Economy</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Create a sharing economy where skills are valued equally</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature: Community Collaboration -->
+            <div class="bg-gradient-to-br from-rose-50 to-pink-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-8 card-shadow hover:shadow-2xl transition-all duration-300 border-l-4 border-rose-500">
+                <div class="flex items-start mb-4">
+                    <div class="w-14 h-14 bg-rose-500 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-users text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Community Collaboration</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Promoting community collaboration and mutual support</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature: No Money Exchange -->
+            <div class="bg-gradient-to-br from-violet-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-8 card-shadow hover:shadow-2xl transition-all duration-300 border-l-4 border-violet-500">
+                <div class="flex items-start mb-4">
+                    <div class="w-14 h-14 bg-violet-500 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-ban text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">No Money Exchange</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">It allows users to exchange skills without using money</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature: Build Stronger Communities -->
+            <div class="bg-gradient-to-br from-sky-50 to-blue-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-8 card-shadow hover:shadow-2xl transition-all duration-300 border-l-4 border-sky-500">
+                <div class="flex items-start mb-4">
+                    <div class="w-14 h-14 bg-sky-500 rounded-xl flex items-center justify-center mr-4">
+                        <i class="fas fa-home text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2 text-gray-900 dark:text-white">Build Stronger Communities</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Voice: To create a sharing economy where it is valued equally</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Services Section -->
+<section class="py-16 bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-4xl font-bold text-center mb-12">
+            <i class="fas fa-fire text-orange-500 mr-3"></i>Popular Services
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Service Card 1 -->
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-8 card-shadow hover-scale">
+                <div class="w-20 h-20 bg-blue-500 rounded-2xl flex items-center justify-center mb-6 transform rotate-3">
+                    <i class="fas fa-chalkboard-teacher text-white text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-3 text-gray-900 dark:text-white">Tutoring</h3>
+                <p class="text-gray-700 dark:text-gray-300">Help others with subjects you love & earn time credits for future services.</p>
+            </div>
+            
+            <!-- Service Card 2 -->
+            <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-8 card-shadow hover-scale">
+                <div class="w-20 h-20 bg-purple-500 rounded-2xl flex items-center justify-center mb-6 transform -rotate-3">
+                    <i class="fas fa-broom text-white text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-3 text-gray-900 dark:text-white">House Help</h3>
+                <p class="text-gray-700 dark:text-gray-300">Assist in cleaning or organizing, and earn hours for help you need.</p>
+            </div>
+            
+            <!-- Service Card 3 -->
+            <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-8 card-shadow hover-scale">
+                <div class="w-20 h-20 bg-green-500 rounded-2xl flex items-center justify-center mb-6 transform rotate-3">
+                    <i class="fas fa-laptop-code text-white text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-3 text-gray-900 dark:text-white">Tech Support</h3>
+                <p class="text-gray-700 dark:text-gray-300">Fix devices or teach someone how to use an app — earn time helping others!</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section id="how-it-works" class="py-16 bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-4xl font-bold text-center mb-12">
+            <i class="fas fa-question-circle text-blue-600 mr-3"></i>How It Works
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Step 1 -->
+            <div class="text-center">
+                <div class="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4 shadow-lg">
+                    1
+                </div>
+                <h3 class="text-xl font-bold mb-3">Sign Up Free</h3>
+                <p class="text-gray-600 dark:text-gray-400">Create your account in seconds and start building your time bank.</p>
+            </div>
+            
+            <!-- Step 2 -->
+            <div class="text-center">
+                <div class="w-20 h-20 bg-purple-600 text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4 shadow-lg">
+                    2
+                </div>
+                <h3 class="text-xl font-bold mb-3">Offer Your Skills</h3>
+                <p class="text-gray-600 dark:text-gray-400">List the services you can provide to help others in the community.</p>
+            </div>
+            
+            <!-- Step 3 -->
+            <div class="text-center">
+                <div class="w-20 h-20 bg-green-600 text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4 shadow-lg">
+                    3
+                </div>
+                <h3 class="text-xl font-bold mb-3">Earn Time Credits</h3>
+                <p class="text-gray-600 dark:text-gray-400">Help others and accumulate hours in your time bank account.</p>
+            </div>
+            
+            <!-- Step 4 -->
+            <div class="text-center">
+                <div class="w-20 h-20 bg-orange-600 text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4 shadow-lg">
+                    4
+                </div>
+                <h3 class="text-xl font-bold mb-3">Get Help</h3>
+                <p class="text-gray-600 dark:text-gray-400">Use your time credits to request services from community members.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-16 bg-white dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-4xl font-bold text-center mb-12">
+            <i class="fas fa-comments text-purple-600 mr-3"></i>What People Say
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8" x-data="{ activeTestimonial: 0 }">
+            <!-- Testimonial 1 -->
+            <div class="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-8 card-shadow">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                        AV
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-lg">Amit Verma</h4>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm">Delhi, India</p>
+                    </div>
+                </div>
+                <div class="text-yellow-400 mb-3">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="text-gray-700 dark:text-gray-300 italic">"TimeBank helped me fix my laptop using just time credits. I taught someone English and got tech support in return. Amazing community!"</p>
+            </div>
+            
+            <!-- Testimonial 2 -->
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-700 dark:to-gray-600 rounded-2xl p-8 card-shadow">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                        RV
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-lg">Robin Verma</h4>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm">Ambala, India</p>
+                    </div>
+                </div>
+                <div class="text-yellow-400 mb-3">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="text-gray-700 dark:text-gray-300 italic">"I taught someone guitar and used that time to get help with plumbing! This platform is revolutionary for community building."</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="relative overflow-hidden bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 text-white py-20">
+    <div class="absolute inset-0 bg-black opacity-20"></div>
+    <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6">
+            Ready to Join the Community?
+        </h2>
+        <p class="text-xl mb-10 text-gray-100 max-w-2xl mx-auto">
+            Start exchanging skills today and discover the power of community collaboration. Join thousands of members already making a difference!
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'register' %}" class="px-10 py-5 bg-white text-purple-600 rounded-full font-bold text-lg hover:bg-gray-100 transform hover:scale-105 transition-all shadow-2xl">
+                Create Free Account
+            </a>
+            <a href="{% url 'login' %}" class="px-10 py-5 bg-white/20 backdrop-blur-sm border-2 border-white text-white rounded-full font-bold text-lg hover:bg-white/30 transition-all">
+                Sign In
+            </a>
+        </div>
+        <p class="mt-6 text-sm text-gray-200">
+            <i class="fas fa-check-circle mr-2"></i>No credit card required
+            <span class="mx-3">•</span>
+            <i class="fas fa-check-circle mr-2"></i>Free forever
+            <span class="mx-3">•</span>
+            <i class="fas fa-check-circle mr-2"></i>Cancel anytime
+        </p>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<style>
+    @keyframes blob {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        25% { transform: translate(20px, -50px) scale(1.1); }
+        50% { transform: translate(-20px, 20px) scale(0.9); }
+        75% { transform: translate(50px, 50px) scale(1.05); }
+    }
+    
+    .animate-blob {
+        animation: blob 7s infinite;
+    }
+    
+    .animation-delay-2000 {
+        animation-delay: 2s;
+    }
+    
+    .animation-delay-4000 {
+        animation-delay: 4s;
+    }
+</style>
+
+<script>
+function playVideoDemo() {
+    alert('🎬 Video demo coming soon! Stay tuned for an in-depth tour of SkillSwap features.');
+}
+
+// Counter animation
+function animateCounter(id, target) {
+    let current = 0;
+    const el = document.getElementById(id);
+    if (!el || isNaN(target)) return;
+
+    const step = Math.max(1, Math.ceil(target / 50));
+    const interval = setInterval(() => {
+        current += step;
+        if (current >= target) {
+            current = target;
+            clearInterval(interval);
+        }
+        el.innerText = current;
+    }, 30);
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const userCount = parseInt("{{ user_count|default:0 }}") || 0;
+    const hoursExchanged = parseInt("{{ total_hours|default:0|floatformat:0 }}") || 0;
+    const activeServices = parseInt("{{ active_services|default:0 }}") || 0;
+
+    animateCounter('userCount', userCount);
+    animateCounter('hoursExchanged', hoursExchanged);
+    animateCounter('activeServices', activeServices);
+});
+</script>
+{% endblock %}
