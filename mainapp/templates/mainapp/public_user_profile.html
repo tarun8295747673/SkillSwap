@@ -1,0 +1,150 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}{{ viewed_user.username }}'s Profile - SkillSwap{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Profile Header -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-8 border border-gray-200 dark:border-gray-700">
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+                <!-- Avatar -->
+                <div class="w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-5xl">
+                    {{ viewed_user.username|first|upper }}
+                </div>
+
+                <!-- User Info -->
+                <div class="flex-1 text-center md:text-left">
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">{{ viewed_user.username }}</h1>
+                    {% if profile %}
+                    <p class="text-xl text-gray-600 dark:text-gray-400 mb-4">{{ profile.full_name }}</p>
+                    {% endif %}
+                    
+                    <!-- Stats -->
+                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-6 mb-4">
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Services</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ services.count }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Rating</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                                {% if avg_rating > 0 %}
+                                <i class="fas fa-star text-yellow-400 text-lg"></i> {{ avg_rating }}
+                                {% else %}
+                                --
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Reviews</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_reviews }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Contact Button -->
+                    {% if user != viewed_user %}
+                    <a href="{% url 'send_message' viewed_user.id %}" 
+                       class="inline-block bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold">
+                        <i class="fas fa-envelope mr-2"></i>Send Message
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Services -->
+            <div class="lg:col-span-2">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        <i class="fas fa-briefcase text-purple-600 mr-2"></i>Services Offered
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for service in services %}
+                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-lg transition-all">
+                            <div class="flex items-start justify-between mb-2">
+                                <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded text-xs font-semibold">
+                                    {{ service.category.category_name }}
+                                </span>
+                                <span class="text-green-600 dark:text-green-400 font-bold">{{ service.available_hours }}h</span>
+                            </div>
+                            <h3 class="font-bold text-gray-900 dark:text-white mb-2">{{ service.title }}</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{{ service.description }}</p>
+                            <a href="{% url 'service_detail' service.id %}" 
+                               class="text-purple-600 hover:text-purple-700 text-sm font-semibold">
+                                View Details <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                        {% empty %}
+                        <div class="col-span-2 text-center py-8">
+                            <i class="fas fa-box-open text-4xl text-gray-300 dark:text-gray-600 mb-2"></i>
+                            <p class="text-gray-500 dark:text-gray-400">No services offered yet</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 sticky top-24">
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">
+                        <i class="fas fa-star text-yellow-500 mr-2"></i>Reviews
+                    </h2>
+
+                    {% if avg_rating > 0 %}
+                    <div class="text-center mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                        <div class="text-5xl font-bold text-gray-900 dark:text-white mb-2">{{ avg_rating }}</div>
+                        <div class="flex items-center justify-center space-x-1 mb-2">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= avg_rating %}
+                                <i class="fas fa-star text-yellow-400"></i>
+                                {% else %}
+                                <i class="far fa-star text-gray-300 dark:text-gray-600"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ total_reviews }} review{{ total_reviews|pluralize }}</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="space-y-4 max-h-96 overflow-y-auto">
+                        {% for review in reviews %}
+                        <div class="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0">
+                            <div class="flex items-start mb-2">
+                                <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                    {{ review.reviewer.username|first|upper }}
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <p class="font-semibold text-sm text-gray-900 dark:text-white">{{ review.reviewer.username }}</p>
+                                    <div class="flex items-center">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= review.rating %}
+                                            <i class="fas fa-star text-yellow-400 text-xs"></i>
+                                            {% else %}
+                                            <i class="far fa-star text-gray-300 dark:text-gray-600 text-xs"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% if review.comment %}
+                            <p class="text-sm text-gray-600 dark:text-gray-400 ml-11">{{ review.comment }}</p>
+                            {% endif %}
+                            <p class="text-xs text-gray-400 mt-1 ml-11">{{ review.created_at|timesince }} ago</p>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-8">
+                            <i class="fas fa-comment-slash text-4xl text-gray-300 dark:text-gray-600 mb-2"></i>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">No reviews yet</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

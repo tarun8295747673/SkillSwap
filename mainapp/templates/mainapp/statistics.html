@@ -1,0 +1,187 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}Statistics - SkillSwap{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                <i class="fas fa-chart-line text-purple-600 mr-3"></i>My Statistics
+            </h1>
+            <p class="text-gray-600 dark:text-gray-400">Track your time bank activity and performance</p>
+        </div>
+
+        <!-- Time Credits Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold">Total Earned</h3>
+                    <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-arrow-up text-2xl"></i>
+                    </div>
+                </div>
+                <p class="text-4xl font-bold">{{ total_earned }} hrs</p>
+                <p class="text-green-100 text-sm mt-2">Time credits received</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl p-6 text-white shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold">Total Spent</h3>
+                    <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-arrow-down text-2xl"></i>
+                    </div>
+                </div>
+                <p class="text-4xl font-bold">{{ total_spent }} hrs</p>
+                <p class="text-red-100 text-sm mt-2">Time credits used</p>
+            </div>
+
+            <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-6 text-white shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold">Current Balance</h3>
+                    <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-wallet text-2xl"></i>
+                    </div>
+                </div>
+                <p class="text-4xl font-bold">{{ current_balance }} hrs</p>
+                <p class="text-purple-100 text-sm mt-2">Available credits</p>
+            </div>
+        </div>
+
+        <!-- Service Statistics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Service Overview</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white">
+                                <i class="fas fa-hand-holding"></i>
+                            </div>
+                            <span class="ml-3 text-gray-900 dark:text-white font-medium">Services Offered</span>
+                        </div>
+                        <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ services_offered }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center text-white">
+                                <i class="fas fa-hand-paper"></i>
+                            </div>
+                            <span class="ml-3 text-gray-900 dark:text-white font-medium">Services Requested</span>
+                        </div>
+                        <span class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ services_requested }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Request Statistics</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center text-white">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <span class="ml-3 text-gray-900 dark:text-white font-medium">Pending Requests</span>
+                        </div>
+                        <span class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ pending_requests }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center text-white">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <span class="ml-3 text-gray-900 dark:text-white font-medium">Accepted Requests</span>
+                        </div>
+                        <span class="text-2xl font-bold text-green-600 dark:text-green-400">{{ accepted_requests }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center text-white">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <span class="ml-3 text-gray-900 dark:text-white font-medium">Rejected Requests</span>
+                        </div>
+                        <span class="text-2xl font-bold text-red-600 dark:text-red-400">{{ rejected_requests }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rating & Reviews -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Rating & Reviews</h2>
+                <div class="text-center">
+                    <div class="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full mb-4">
+                        <div class="text-white">
+                            <div class="text-5xl font-bold">{{ avg_rating }}</div>
+                            <div class="text-sm">out of 5</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center space-x-1 mb-4">
+                        {% for i in "12345" %}
+                            {% if i|length <= avg_rating %}
+                            <i class="fas fa-star text-yellow-400 text-2xl"></i>
+                            {% else %}
+                            <i class="far fa-star text-gray-300 dark:text-gray-600 text-2xl"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400">Based on {{ total_reviews }} review{{ total_reviews|pluralize }}</p>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Recent Activity</h2>
+                <div class="space-y-3">
+                    {% for transaction in recent_transactions|slice:":5" %}
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div class="flex items-center flex-1">
+                            {% if transaction.receiver == user %}
+                            <div class="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                                <i class="fas fa-plus text-green-600 dark:text-green-400 text-sm"></i>
+                            </div>
+                            {% else %}
+                            <div class="w-8 h-8 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
+                                <i class="fas fa-minus text-red-600 dark:text-red-400 text-sm"></i>
+                            </div>
+                            {% endif %}
+                            <div class="ml-3 flex-1">
+                                <p class="text-sm text-gray-900 dark:text-white font-medium truncate">{{ transaction.description|truncatewords:5 }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ transaction.timestamp|timesince }} ago</p>
+                            </div>
+                        </div>
+                        <span class="font-bold {% if transaction.receiver == user %}text-green-600 dark:text-green-400{% else %}text-red-600 dark:text-red-400{% endif %}">
+                            {% if transaction.receiver == user %}+{% else %}-{% endif %}{{ transaction.hours }}h
+                        </span>
+                    </div>
+                    {% empty %}
+                    <p class="text-center text-gray-500 dark:text-gray-400 py-8">No recent activity</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl p-8 text-white text-center">
+            <h2 class="text-2xl font-bold mb-4">Keep Growing Your Time Bank!</h2>
+            <p class="text-purple-100 mb-6">Offer more services and engage with the community to earn more time credits</p>
+            <div class="flex items-center justify-center space-x-4">
+                <a href="{% url 'offer_service' %}" 
+                   class="bg-white text-purple-600 px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors font-semibold">
+                    <i class="fas fa-plus mr-2"></i>Offer Service
+                </a>
+                <a href="{% url 'available_services' %}" 
+                   class="bg-purple-800 text-white px-6 py-3 rounded-lg hover:bg-purple-900 transition-colors font-semibold">
+                    <i class="fas fa-search mr-2"></i>Browse Services
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

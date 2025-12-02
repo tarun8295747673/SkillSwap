@@ -94,3 +94,44 @@ class TimeTransaction(models.Model):
             return f"{self.sender.username} → System : {self.hours}h"
         else:
             return f"Anonymous transaction of {self.hours}h"
+
+
+# ✅ Review/Rating Model
+class Review(models.Model):
+    service_request = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE, related_name='reviews')
+    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='given_reviews')
+    reviewee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_reviews')
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])  # 1-5 stars
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('service_request', 'reviewer')
+
+    def __str__(self):
+        return f"{self.reviewer.username} rated {self.reviewee.username} - {self.rating} stars"
+
+
+# ✅ Notification Model
+class Notification(models.Model):
+    NOTIFICATION_TYPES = [
+        ('service_request', 'Service Request'),
+        ('request_accepted', 'Request Accepted'),
+        ('request_rejected', 'Request Rejected'),
+        ('new_message', 'New Message'),
+        ('new_review', 'New Review'),
+    ]
+    
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES)
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    link = models.CharField(max_length=200, blank=True)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.title}"

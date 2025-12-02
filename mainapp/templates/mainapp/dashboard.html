@@ -3,27 +3,92 @@
 {% block title %}Dashboard - SkillSwap{% endblock %}
 
 {% block content %}
-<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <!-- Welcome Header -->
-        <div class="mb-8 animate-fade-in">
-            <div class="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
-                <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
-                <div class="relative flex flex-col md:flex-row justify-between items-start md:items-center">
-                    <div>
-                        <h1 class="text-4xl font-bold mb-2">
-                            <span id="greeting">Welcome</span>, {{ user.username }}! 👋
-                        </h1>
-                        <p class="text-purple-100">Ready to exchange some skills today?</p>
+<style>
+    .break-email {
+        word-break: break-all;
+        overflow-wrap: anywhere;
+        word-wrap: break-word;
+        hyphens: auto;
+    }
+</style>
+
+<div class="bg-gradient-to-br from-gray-50 via-purple-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen">
+    
+    <!-- Sticky Top Bar with Quick Stats -->
+    <div class="bg-white dark:bg-gray-800 shadow-lg border-b dark:border-gray-700 sticky top-0 z-40 backdrop-blur-xl bg-opacity-95">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                        {{ user.username|slice:":1"|upper }}
                     </div>
-                    <div class="mt-4 md:mt-0">
-                        <div class="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-4 text-center border border-white/30">
-                            <p class="text-sm text-purple-100 mb-1">Your Time Balance</p>
-                            <p class="text-4xl font-bold {% if total_balance >= 0 %}text-yellow-300{% else %}text-red-300{% endif %}">
-                                {{ total_balance }} hrs
-                            </p>
+                    <div>
+                        <p class="text-sm font-bold text-gray-900 dark:text-white">{{ user.username }}</p>
+                        <p class="text-xs text-gray-500 flex items-center gap-1">
+                            <i class="fas fa-circle text-green-500 text-xs animate-pulse"></i>
+                            <span id="liveTime"></span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <div class="text-center px-4 border-r dark:border-gray-600">
+                        <p class="text-2xl font-black {% if total_balance >= 0 %}text-green-600{% else %}text-red-600{% endif %}">{{ total_balance }}</p>
+                        <p class="text-xs text-gray-500 font-medium">Time Credits</p>
+                    </div>
+                    <div class="text-center px-4 border-r dark:border-gray-600">
+                        <p class="text-2xl font-black text-blue-600">{{ offer_service|length }}</p>
+                        <p class="text-xs text-gray-500 font-medium">Services</p>
+                    </div>
+                    <div class="text-center px-4 border-r dark:border-gray-600">
+                        <p class="text-2xl font-black text-purple-600">{{ service_request|length }}</p>
+                        <p class="text-xs text-gray-500 font-medium">Requests</p>
+                    </div>
+                    <div class="text-center px-4">
+                        <p class="text-2xl font-black text-orange-600">{{ incoming_requests|length }}</p>
+                        <p class="text-xs text-gray-500 font-medium">Incoming</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Hero Welcome Card -->
+        <div class="mb-8 animate-fade-in">
+            <div class="relative bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-6 sm:p-10 shadow-2xl overflow-hidden">
+                <!-- Animated Background -->
+                <div class="absolute inset-0 opacity-20">
+                    <div class="absolute top-0 left-0 w-72 h-72 bg-white rounded-full blur-3xl animate-pulse"></div>
+                    <div class="absolute bottom-0 right-0 w-96 h-96 bg-yellow-300 rounded-full blur-3xl animate-pulse animation-delay-2000"></div>
+                </div>
+                
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div class="mb-6 md:mb-0 flex-1 max-w-2xl overflow-hidden pr-4">
+                        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-3">
+                            <span id="greeting">Welcome</span>, <span class="break-email inline-block" style="max-width: 100%;">{{ user.username }}</span>!
+                            <span class="animate-bounce inline-block">👋</span>
+                        </h1>
+                        <p class="text-white text-base sm:text-lg opacity-90 mb-6">Ready to make a difference in your community today?</p>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <a href="{% url 'offer_service' %}" class="bg-white text-purple-600 px-4 sm:px-6 py-3 rounded-xl font-bold hover:shadow-2xl transition-all hover:scale-105 flex items-center gap-2 text-sm sm:text-base">
+                                <i class="fas fa-plus-circle"></i> Offer Service
+                            </a>
+                            <a href="{% url 'available_services' %}" class="bg-purple-800 bg-opacity-40 backdrop-blur-sm text-white px-4 sm:px-6 py-3 rounded-xl font-bold hover:bg-opacity-60 transition-all flex items-center gap-2 text-sm sm:text-base">
+                                <i class="fas fa-search"></i> Browse Services
+                            </a>
+                        </div>
+                    </div>
+                    <div class="bg-white bg-opacity-20 backdrop-blur-xl rounded-3xl px-6 sm:px-10 py-8 text-center border-2 border-white border-opacity-30 shadow-2xl flex-shrink-0">
+                        <p class="text-sm text-white opacity-90 mb-2 font-medium">Your Time Balance</p>
+                        <p class="text-7xl font-black {% if total_balance >= 0 %}text-yellow-300{% else %}text-red-300{% endif %} mb-2">
+                            {{ total_balance }}
+                        </p>
+                        <p class="text-white text-base opacity-80">hours available</p>
+                        <div class="mt-4 flex items-center justify-center gap-2">
+                            <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                            <span class="text-white text-sm font-medium">Active Member</span>
                         </div>
                     </div>
                 </div>
@@ -32,216 +97,417 @@
 
         <!-- Messages Alert -->
         {% if messages %}
-            <div class="mb-6 space-y-3 animate-slide-up">
+            <div class="mb-8 space-y-3 animate-slide-up">
                 {% for message in messages %}
-                    <div class="bg-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-50 dark:bg-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-900 border-l-4 border-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-500 p-4 rounded-lg">
+                    <div class="bg-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-50 dark:bg-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-900 border-l-4 border-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-500 p-5 rounded-xl shadow-lg">
                         <div class="flex items-center">
-                            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %} text-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-500 mr-3"></i>
-                            <p class="text-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-700 dark:text-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-200">{{ message }}</p>
+                            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %} text-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-500 mr-3 text-2xl"></i>
+                            <p class="text-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-800 dark:text-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-200 font-medium">{{ message }}</p>
                         </div>
                     </div>
                 {% endfor %}
             </div>
         {% endif %}
 
-    <!-- Step 4: Incoming Requests for Your Services -->
-    <div class="card p-3 mb-4">
-        <h4 class="text-warning">Incoming Requests for Your Services</h4>
-        {% for request in incoming_requests %}
-            <div class="mb-2">
-                <strong>{{ request.requester.username }}</strong> wants your service: <strong>{{ request.offer.title }}</strong><br>
-                Requested Hours: {{ request.requested_hours }}<br>
-                Status: {{ request.status }}
+        <!-- Quick Action Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-slide-up">
+            <!-- Services Card -->
+            <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 border-l-4 border-blue-500">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                        <i class="fas fa-briefcase text-white text-2xl"></i>
+                    </div>
+                    <span class="text-5xl font-black text-blue-600">{{ offer_service|length }}</span>
+                </div>
+                <p class="text-sm text-gray-700 dark:text-gray-300 font-bold mb-1">Services Offered</p>
+                <p class="text-xs text-gray-500 mb-3">Your active listings</p>
+                <a href="{% url 'my_services' %}" class="text-blue-600 hover:text-blue-700 text-sm font-bold flex items-center gap-1">
+                    Manage <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
 
-                {% if request.status == "Pending" %}
+            <!-- Requests Card -->
+            <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 border-l-4 border-purple-500">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                        <i class="fas fa-hand-paper text-white text-2xl"></i>
+                    </div>
+                    <span class="text-5xl font-black text-purple-600">{{ service_request|length }}</span>
+                </div>
+                <p class="text-sm text-gray-700 dark:text-gray-300 font-bold mb-1">Your Requests</p>
+                <p class="text-xs text-gray-500 mb-3">Pending service requests</p>
+                <a href="{% url 'request_service_list' %}" class="text-purple-600 hover:text-purple-700 text-sm font-bold flex items-center gap-1">
+                    View All <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
 
-                 {% if request.id %}
-        <a href="{% url 'view_request_detail' request.id %}" class="btn btn-info btn-sm">View Details</a>
-                 {% endif %}
-                <form method="post" action="{% url 'respond_request' request.id %}" style="display:inline;">
-                    {% csrf_token %}
-                    <input type="hidden" name="response" value="accept">
-                    <button class="btn btn-sm btn-success">Accept</button>
-                </form>
-                <form method="post" action="{% url 'respond_request' request.id %}" style="display:inline;">
-                    {% csrf_token %}
-                    <input type="hidden" name="response" value="reject">
-                    <button class="btn btn-sm btn-danger">Reject</button>
-                </form>
+            <!-- Incoming Card -->
+            <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 border-l-4 border-orange-500">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                        <i class="fas fa-inbox text-white text-2xl"></i>
+                    </div>
+                    <span class="text-5xl font-black text-orange-600">{{ incoming_requests|length }}</span>
+                </div>
+                <p class="text-sm text-gray-700 dark:text-gray-300 font-bold mb-1">Incoming Requests</p>
+                <p class="text-xs text-gray-500 mb-3">Need your attention</p>
+                {% if incoming_requests %}
+                    <span class="bg-orange-100 dark:bg-orange-900 text-orange-600 px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+                        Action Required
+                    </span>
                 {% endif %}
             </div>
-            <hr>
-        {% empty %}
-            <p>No incoming requests yet.</p>
-        {% endfor %}
-    </div>
 
-    
-
-    <div class="row mb-4">
-        <!-- Service Offers -->
-        <div class="col-md-6">
-            <div class="card p-3">
-                <h4 class="text-primary">Your Service Offers</h4>
-                {% for offer in offer_service %}
-                    <div class="mb-2">
-                        <strong>{{ offer.title }}</strong><br>
-                        ID: {{ offer.id }}<br>
-                        Category: {{ offer.category.category_name }}<br>
-                        Available Hours: {{ offer.available_hours }}<br>
-                        Description: {{ offer.description }}
+            <!-- Messages Card -->
+            <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all hover:-translate-y-2 border-l-4 border-green-500">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                        <i class="fas fa-envelope text-white text-2xl"></i>
                     </div>
-                    <hr>
-                {% empty %}
-                    <p>No services offered yet.</p>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Service Requests -->
-        <div class="col-md-6">
-            <div class="card p-3">
-                <h4 class="text-success">Your Service Requests</h4>
-                {% for request in service_request %}
-                    <div class="mb-2">
-                        <strong>{{ request.offer.title }}</strong><br>
-                        Provider: {{ request.offer.user.username }}<br>
-                        Requested Hours: {{ request.requested_hours }}<br>
-                        Status: {{ request.status|default:"Pending" }}
-                        <form action="{% url 'delete_request' request.id %}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-danger mt-1">Delete</button>
-                        </form>
-                    </div>
-                    <hr>
-                {% empty %}
-                    <p>No service requests yet.</p>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    <!-- ✅ INBOX / RECEIVED MESSAGES -->
-<div class="card p-3 mb-4">
-    <h4 class="text-primary">📩 Inbox - Messages from Users</h4>
-    {% for msg in received_messages %}
-        <div class="mb-2">
-            <strong>From:</strong> {{ msg.sender.username }}<br>
-            <strong>Message:</strong> {{ msg.content }}<br>
-            <small class="text-muted">Received at: {{ msg.timestamp|date:"d M Y, h:i A" }}</small>
-        </div>
-        <hr>
-    {% empty %}
-        <p>No messages yet.</p>
-    {% endfor %}
-</div>
-
-
-    <!-- <div class="card p-3 my-3 shadow">
-    <h4>User Profile</h4>
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item"><strong>Full Name:</strong> {{ profile.full_name }}</li>
-        <li class="list-group-item"><strong>Email:</strong> {{ profile.user.email }}</li>
-        <li class="list-group-item"><strong>Phone:</strong> {{ profile.phone_number }}</li>
-        <li class="list-group-item"><strong>Time Balance:</strong> {{ profile.time_balance }} hours</li>
-    </ul>
-</div> -->
-
-
-    <!-- Transactions -->
-    <div class="card p-3 mb-4">
-        <h4 class="text-secondary">Your Time Transactions</h4>
-        <ul class="list-group mb-2">
-            {% for entry in time_entries %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>
-                            {% if "Login Bonus" in entry.description %}
-                                🎁 <span class="text-success">Login Bonus</span>
-                            {% else %}
-                                {{ entry.description }}
-                            {% endif %}
-                        </strong><br>
-                        <small class="text-muted">On {{ entry.timestamp|date:"d M Y, h:i A" }}</small>
-                    </div>
-                    {% if entry.hours < 0 %}
-                        <span class="badge bg-danger">{{ entry.hours }} hrs</span>
-                    {% else %}
-                        <span class="badge bg-success">+{{ entry.hours }} hrs</span>
-                    {% endif %}
-                </li>
-            {% empty %}
-                <li class="list-group-item">No transactions yet.</li>
-            {% endfor %}
-        </ul>
-
-        <h6 class="text-end mt-2">
-            <strong>Total Balance:</strong>
-            {% if total_balance < 0 %}
-                <span class="text-danger">{{ total_balance }} hours</span>
-            {% else %}
-                <span class="text-success">{{ total_balance }} hours</span>
-            {% endif %}
-        </h6>
-    </div>
-
-    <!-- 📨 INBOX Section (Add this wherever needed in your dashboard) -->
-<div class="card p-3 my-4">
-    <h4 class="text-dark">📥 Your Inbox</h4>
-    {% for msg in received_messages %}
-        <div class="border rounded p-2 mb-3">
-            <strong>From:</strong> {{ msg.sender.username }}<br>
-            <strong>Message:</strong> {{ msg.content }}<br>
-            <small class="text-muted">Received on {{ msg.timestamp|date:"d M Y, h:i A" }}</small>
-
-            <!-- ✅ Reply Form -->
-            <form method="post" action="{% url 'send_message' msg.sender.id %}" class="mt-2">
-                {% csrf_token %}
-                <div class="input-group">
-                    <input type="text" name="content" class="form-control form-control-sm" placeholder="Reply to {{ msg.sender.username }}" required>
-                    <button type="submit" class="btn btn-sm btn-outline-success">Reply</button>
+                    <span class="text-5xl font-black text-green-600">{{ received_messages|length }}</span>
                 </div>
-            </form>
-        </div>
-    {% empty %}
-        <p>No messages received yet.</p>
-    {% endfor %}
-</div>
-
-
-    <!-- Browse Available Services -->
-    <div class="card p-3">
-        <h4 class="text-info">Browse Available Services</h4>
-        {% for offer in available_offers %}
-
-        {% if offer.user.id %}
-<form method="post" action="{% url 'send_message' offer.user.id %}" class="d-flex mt-2">
-    {% csrf_token %}
-    <input type="text" name="content" class="form-control form-control-sm me-2" placeholder="Ask before requesting..." required>
-    <button type="submit" class="btn btn-sm btn-outline-info">Message</button>
-</form>
-{% endif %}
-
-
-
-
-            <div class="mb-3">
-                <strong>{{ offer.title }}</strong><br>
-                Offer ID: {{ offer.id }}<br>
-                Category: {{ offer.category.category_name }}<br>
-                Provider: {{ offer.user.username }}<br>
-                Available Hours: {{ offer.available_hours }}<br>
-                <form method="post" action="{% url 'request_service' offer.id %}">
-                    {% csrf_token %}
-                    <div class="input-group mt-2 mb-2" style="max-width: 300px;">
-                        <input type="number" name="requested_hours" step="0.25" min="0.25" max="{{ offer.available_hours }}" class="form-control" placeholder="Enter hours" required>
-                        <button type="submit" class="btn btn-sm btn-primary">Request</button>
-                    </div>
-                </form>
+                <p class="text-sm text-gray-700 dark:text-gray-300 font-bold mb-1">Messages</p>
+                <p class="text-xs text-gray-500 mb-3">Unread messages</p>
+                <a href="{% url 'inbox' %}" class="text-green-600 hover:text-green-700 text-sm font-bold flex items-center gap-1">
+                    Open Inbox <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
-            <hr>
-        {% empty %}
-            <p>No available services from others.</p>
-        {% endfor %}
+        </div>
+
+        <!-- Main Dashboard Content Grid -->
+        <!-- Main Dashboard Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Column - Main Content -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Incoming Requests Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl animate-slide-up">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold flex items-center gap-3">
+                            <i class="fas fa-bell text-orange-500"></i>
+                            Incoming Requests
+                        </h2>
+                        <span class="bg-orange-100 dark:bg-orange-900 text-orange-600 px-4 py-2 rounded-full text-sm font-bold">
+                            {{ incoming_requests|length }} pending
+                        </span>
+                    </div>
+                    
+                    {% if incoming_requests %}
+                        <div class="space-y-4">
+                            {% for request in incoming_requests %}
+                                <div class="border dark:border-gray-700 rounded-xl p-5 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all group">
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                                                {{ request.requester.username|slice:":1"|upper }}
+                                            </div>
+                                            <div>
+                                                <p class="font-bold text-lg text-gray-900 dark:text-white">{{ request.requester.username }}</p>
+                                                <p class="text-sm text-gray-600 dark:text-gray-400">wants your service</p>
+                                            </div>
+                                        </div>
+                                        <span class="bg-blue-100 dark:bg-blue-900 text-blue-600 px-3 py-1 rounded-full text-xs font-bold">
+                                            {{ request.status }}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 rounded-xl p-4 mb-4">
+                                        <p class="font-bold text-gray-900 dark:text-white mb-2">{{ request.offer.title }}</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
+                                            <i class="fas fa-clock text-orange-500"></i>
+                                            {{ request.requested_hours }} hours requested
+                                        </p>
+                                    </div>
+                                    
+                                    {% if request.status == "Pending" %}
+                                        <div class="flex gap-2">
+                                            {% if request.id %}
+                                                <a href="{% url 'view_request_detail' request.id %}" class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-xl hover:bg-blue-700 transition-all text-center text-sm font-bold flex items-center justify-center gap-2">
+                                                    <i class="fas fa-eye"></i> View Details
+                                                </a>
+                                            {% endif %}
+                                            <form method="post" action="{% url 'respond_request' request.id %}" class="flex-1">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="response" value="accept">
+                                                <button class="w-full bg-green-600 text-white px-4 py-3 rounded-xl hover:bg-green-700 transition-all text-sm font-bold flex items-center justify-center gap-2">
+                                                    <i class="fas fa-check"></i> Accept
+                                                </button>
+                                            </form>
+                                            <form method="post" action="{% url 'respond_request' request.id %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="response" value="reject">
+                                                <button class="bg-red-600 text-white px-5 py-3 rounded-xl hover:bg-red-700 transition-all text-sm font-bold">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-16">
+                            <i class="fas fa-inbox text-gray-300 dark:text-gray-600 text-7xl mb-4"></i>
+                            <p class="text-gray-500 dark:text-gray-400 text-lg">No incoming requests yet</p>
+                            <p class="text-gray-400 dark:text-gray-500 text-sm mt-2">They'll appear here when people request your services</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Inbox Messages Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl" x-data="{ showReplies: {} }">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold flex items-center gap-3">
+                            <i class="fas fa-envelope text-green-500"></i>
+                            Inbox
+                        </h2>
+                        <span class="bg-green-100 dark:bg-green-900 text-green-600 px-4 py-2 rounded-full text-sm font-bold">
+                            {{ received_messages|length }} messages
+                        </span>
+                    </div>
+                    
+                    {% if received_messages %}
+                        <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                            {% for msg in received_messages %}
+                                <div class="border dark:border-gray-700 rounded-xl p-5 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+                                    <div class="flex items-start gap-3 mb-3">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
+                                            {{ msg.sender.username|slice:":1"|upper }}
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <p class="font-bold text-gray-900 dark:text-white">{{ msg.sender.username }}</p>
+                                                <span class="text-xs text-gray-500">{{ msg.timestamp|date:"M d, h:i A" }}</span>
+                                            </div>
+                                            <p class="text-gray-700 dark:text-gray-300">{{ msg.content }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <button @click="showReplies[{{ msg.id }}] = !showReplies[{{ msg.id }}]" class="text-blue-600 hover:text-blue-700 text-sm font-bold flex items-center gap-1">
+                                        <i class="fas fa-reply"></i>
+                                        <span x-text="showReplies[{{ msg.id }}] ? 'Hide Reply' : 'Reply'">Reply</span>
+                                    </button>
+                                    
+                                    <form x-show="showReplies[{{ msg.id }}]" method="post" action="{% url 'send_message' msg.sender.id %}" class="mt-3" x-cloak>
+                                        {% csrf_token %}
+                                        <div class="flex gap-2">
+                                            <input type="text" name="content" class="flex-1 px-4 py-3 border dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Type your reply..." required>
+                                            <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-all font-bold">
+                                                <i class="fas fa-paper-plane"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-16">
+                            <i class="fas fa-envelope-open text-gray-300 dark:text-gray-600 text-7xl mb-4"></i>
+                            <p class="text-gray-500 dark:text-gray-400 text-lg">No messages yet</p>
+                            <p class="text-gray-400 dark:text-gray-500 text-sm mt-2">Your inbox is empty</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <!-- Right Column - Sidebar -->
+            <div class="space-y-6">
+                
+                <!-- Your Services -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i class="fas fa-briefcase text-blue-500"></i>
+                        Your Services
+                    </h3>
+                    
+                    {% if offer_service %}
+                        <div class="space-y-3 max-h-[350px] overflow-y-auto pr-2">
+                            {% for offer in offer_service %}
+                                <div class="border dark:border-gray-700 rounded-xl p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+                                    <p class="font-bold text-gray-900 dark:text-white mb-1">{{ offer.title }}</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                                        <i class="fas fa-tag"></i> {{ offer.category.category_name }}
+                                    </p>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                                            <i class="fas fa-clock text-blue-500"></i> {{ offer.available_hours }} hrs
+                                        </span>
+                                        <span class="bg-blue-100 dark:bg-blue-900 text-blue-600 px-2 py-1 rounded text-xs font-bold">#{{ offer.id }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <a href="{% url 'my_services' %}" class="mt-4 block text-center bg-blue-50 dark:bg-blue-900 text-blue-600 px-4 py-2 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-800 transition-all font-bold text-sm">
+                            View All Services <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    {% else %}
+                        <div class="text-center py-10">
+                            <i class="fas fa-briefcase text-gray-300 dark:text-gray-600 text-5xl mb-3"></i>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">No services offered yet</p>
+                            <a href="{% url 'offer_service' %}" class="inline-block bg-blue-600 text-white px-5 py-2 rounded-xl hover:bg-blue-700 transition-all text-sm font-bold">
+                                <i class="fas fa-plus mr-2"></i>Offer Service
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Your Requests -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i class="fas fa-hand-paper text-purple-500"></i>
+                        Your Requests
+                    </h3>
+                    
+                    {% if service_request %}
+                        <div class="space-y-3 max-h-[300px] overflow-y-auto pr-2">
+                            {% for request in service_request %}
+                                <div class="border dark:border-gray-700 rounded-xl p-4">
+                                    <p class="font-bold text-gray-900 dark:text-white mb-1">{{ request.offer.title }}</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">Provider: {{ request.offer.user.username }}</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs px-3 py-1 rounded-full {% if request.status == 'Accepted' %}bg-green-100 dark:bg-green-900 text-green-600{% elif request.status == 'Rejected' %}bg-red-100 dark:bg-red-900 text-red-600{% else %}bg-yellow-100 dark:bg-yellow-900 text-yellow-600{% endif %} font-bold">
+                                            {{ request.status|default:"Pending" }}
+                                        </span>
+                                        <form action="{% url 'delete_request' request.id %}" method="post" class="inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="text-red-600 hover:text-red-700 text-xs font-bold">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-10">
+                            <i class="fas fa-hand-paper text-gray-300 dark:text-gray-600 text-5xl mb-3"></i>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">No requests made yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Time Transactions -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i class="fas fa-history text-indigo-500"></i>
+                        Recent Transactions
+                    </h3>
+                    
+                    {% if time_entries %}
+                        <div class="space-y-2 max-h-[300px] overflow-y-auto pr-2">
+                            {% for entry in time_entries|slice:":10" %}
+                                <div class="flex items-center justify-between py-3 border-b dark:border-gray-700 last:border-b-0">
+                                    <div class="flex-1">
+                                        <p class="text-sm font-bold text-gray-900 dark:text-white">
+                                            {% if "Login Bonus" in entry.description %}
+                                                🎁 Login Bonus
+                                            {% else %}
+                                                {{ entry.description }}
+                                            {% endif %}
+                                        </p>
+                                        <p class="text-xs text-gray-500">{{ entry.timestamp|date:"M d, h:i A" }}</p>
+                                    </div>
+                                    <span class="font-black text-lg {% if entry.hours < 0 %}text-red-600{% else %}text-green-600{% endif %}">
+                                        {% if entry.hours > 0 %}+{% endif %}{{ entry.hours }}
+                                    </span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t dark:border-gray-700 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900 dark:to-purple-900 rounded-xl p-4">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-gray-900 dark:text-white">Total Balance:</span>
+                                <span class="text-3xl font-black {% if total_balance < 0 %}text-red-600{% else %}text-green-600{% endif %}">
+                                    {{ total_balance }} hrs
+                                </span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-10">
+                            <i class="fas fa-history text-gray-300 dark:text-gray-600 text-5xl mb-3"></i>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">No transactions yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Browse Available Services Section -->
+        <div class="mt-8 bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-3xl font-bold flex items-center gap-3">
+                    <i class="fas fa-store text-cyan-500"></i>
+                    Browse Available Services
+                </h2>
+                <a href="{% url 'available_services' %}" class="text-blue-600 hover:text-blue-700 font-bold flex items-center gap-2">
+                    View All <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            {% if available_offers %}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for offer in available_offers|slice:":6" %}
+                        <div class="border dark:border-gray-700 rounded-2xl p-6 hover:shadow-2xl transition-all hover:-translate-y-1 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700">
+                            <div class="flex items-start justify-between mb-4">
+                                <h3 class="font-bold text-lg text-gray-900 dark:text-white flex-1">{{ offer.title }}</h3>
+                                <span class="bg-blue-100 dark:bg-blue-900 text-blue-600 px-3 py-1 rounded-full text-xs font-bold">
+                                    #{{ offer.id }}
+                                </span>
+                            </div>
+                            
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 flex items-center gap-2">
+                                <i class="fas fa-tag text-cyan-500"></i>
+                                {{ offer.category.category_name }}
+                            </p>
+                            
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-lg">
+                                    {{ offer.user.username|slice:":1"|upper }}
+                                </div>
+                                <span class="text-sm text-gray-700 dark:text-gray-300 font-medium">{{ offer.user.username }}</span>
+                            </div>
+                            
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 flex items-center gap-2">
+                                <i class="fas fa-clock text-orange-500"></i>
+                                {{ offer.available_hours }} hours available
+                            </p>
+                            
+                            <form method="post" action="{% url 'request_service' offer.id %}" class="mb-3">
+                                {% csrf_token %}
+                                <div class="flex gap-2">
+                                    <input type="number" name="requested_hours" step="0.25" min="0.25" max="{{ offer.available_hours }}" class="flex-1 px-3 py-2 border dark:border-gray-600 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Hours" required>
+                                    <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-xl hover:bg-blue-700 transition-all text-sm font-bold">
+                                        Request
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            {% if offer.user.id %}
+                                <form method="post" action="{% url 'send_message' offer.user.id %}">
+                                    {% csrf_token %}
+                                    <div class="flex gap-2">
+                                        <input type="text" name="content" class="flex-1 px-3 py-2 border dark:border-gray-600 rounded-xl text-sm focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white" placeholder="Send message..." required>
+                                        <button type="submit" class="text-green-600 hover:text-green-700 px-3">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-16">
+                    <i class="fas fa-store-slash text-gray-300 dark:text-gray-600 text-7xl mb-4"></i>
+                    <p class="text-gray-500 dark:text-gray-400 text-lg">No services available at the moment</p>
+                    <p class="text-gray-400 dark:text-gray-500 text-sm mt-2">Be the first to offer a service!</p>
+                </div>
+            {% endif %}
+        </div>
+
     </div>
 </div>
 {% endblock %}

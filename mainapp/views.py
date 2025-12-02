@@ -9,13 +9,14 @@ from decimal import Decimal
 from django.core.mail import send_mail
 from datetime import date
 from django.db.models import Q
-from django.db.models import Sum
+from django.db.models import Sum, Avg
+from django.db import models
 
 from django.contrib import messages as django_messages
 from .models import Message, TimeBankUser
 
 
-from .models import TimeTransaction, UserProfile, ServiceOffer, ServiceRequest, Category
+from .models import TimeTransaction, UserProfile, ServiceOffer, ServiceRequest, Category, Review, Notification
 from .forms import EditUserProfileForm
 
 User = get_user_model()
@@ -72,7 +73,7 @@ def send_message(request, receiver_id):
 def inbox(request):
     received_msgs = Message.objects.filter(receiver=request.user).order_by('-timestamp')
     sent_msgs = Message.objects.filter(sender=request.user).order_by('-timestamp')
-    return render(request, 'inbox.html', {'received_msgs': received_msgs, 'sent_msgs': sent_msgs})
+    return render(request, 'mainapp/inbox.html', {'received_messages': received_msgs, 'sent_messages': sent_msgs})
 
 
 # User Login
@@ -327,6 +328,308 @@ def view_request_detail(request, request_id):
         'service_request': service_request,
         'requester_profile': requester_profile,
     })
+
+# ========== NEW FEATURE PAGES ==========
+
+# Categories Page - Browse services by category
+@login_required
+def categories_view(request):
+    categories = Category.objects.all()
+    category_data = []
+    
+    for category in categories:
+        service_count = ServiceOffer.objects.filter(category=category, available_hours__gt=0).count()
+        category_data.append({
+            'category': category,
+            'service_count': service_count
+        })
+    
+    return render(request, 'mainapp/categories.html', {
+        'category_data': category_data
+    })
+
+
+# Category Detail - View services in a specific category
+@login_required
+def category_detail_view(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    services = ServiceOffer.objects.filter(category=category, available_hours__gt=0).exclude(user=request.user)
+    
+    return render(request, 'mainapp/category_detail.html', {
+        'category': category,
+        'services': services
+    })
+
+
+# Transaction History Page
+@login_required
+def transaction_history_view(request):
+    transactions = TimeTransaction.objects.filter(
+        Q(sender=request.user) | Q(receiver=request.user)
+    ).order_by('-timestamp')
+    
+    # Calculate totals
+    earned = TimeTransaction.objects.filter(receiver=request.user).aggregate(
+        total=Sum('hours'))['total'] or Decimal('0')
+    spent = TimeTransaction.objects.filter(sender=request.user).aggregate(
+        total=Sum('hours'))['total'] or Decimal('0')
+    
+    return render(request, 'mainapp/transaction_history.html', {
+        'transactions': transactions,
+        'total_earned': earned,
+        'total_spent': spent,
+        'balance': earned - spent
+    })
+
+
+# User Directory - Browse all users
+@login_required
+def user_directory_view(request):
+    search_query = request.GET.get('search', '')
+    
+    users = TimeBankUser.objects.exclude(id=request.user.id)
+    
+    if search_query:
+        users = users.filter(
+            Q(username__icontains=search_query) |
+            Q(userprofile__full_name__icontains=search_query)
+        )
+    
+    user_data = []
+    for user in users:
+        profile = UserProfile.objects.filter(user=user).first()
+        services_count = ServiceOffer.objects.filter(user=user, available_hours__gt=0).count()
+        avg_rating = Review.objects.filter(reviewee=user).aggregate(
+            avg=models.Avg('rating'))['avg'] or 0
+        
+        user_data.append({
+            'user': user,
+            'profile': profile,
+            'services_count': services_count,
+            'avg_rating': round(avg_rating, 1) if avg_rating else 0
+        })
+    
+    return render(request, 'mainapp/user_directory.html', {
+        'user_data': user_data,
+        'search_query': search_query
+    })
+
+
+# Service Detail Page
+@login_required
+def service_detail_view(request, service_id):
+    service = get_object_or_404(ServiceOffer, id=service_id)
+    provider_profile = UserProfile.objects.filter(user=service.user).first()
+    
+    # Get provider's reviews
+    reviews = Review.objects.filter(reviewee=service.user).order_by('-created_at')[:5]
+    avg_rating = Review.objects.filter(reviewee=service.user).aggregate(
+        avg=models.Avg('rating'))['avg'] or 0
+    
+    return render(request, 'mainapp/service_detail.html', {
+        'service': service,
+        'provider_profile': provider_profile,
+        'reviews': reviews,
+        'avg_rating': round(avg_rating, 1) if avg_rating else 0
+    })
+
+
+# Notifications Center
+@login_required
+def notifications_view(request):
+    notifications = Notification.objects.filter(user=request.user)
+    unread_count = notifications.filter(is_read=False).count()
+    
+    return render(request, 'mainapp/notifications.html', {
+        'notifications': notifications,
+        'unread_count': unread_count
+    })
+
+
+# Mark notification as read
+@login_required
+def mark_notification_read(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification.is_read = True
+    notification.save()
+    
+    if notification.link:
+        return redirect(notification.link)
+    return redirect('notifications')
+
+
+# Add Review for a completed service
+@login_required
+def add_review_view(request, request_id):
+    service_request = get_object_or_404(ServiceRequest, id=request_id)
+    
+    # Only requester can review the provider
+    if service_request.requester != request.user:
+        messages.error(request, "You can only review services you requested.")
+        return redirect('dashboard')
+    
+    if service_request.status != 'Accepted':
+        messages.error(request, "You can only review accepted services.")
+        return redirect('dashboard')
+    
+    # Check if already reviewed
+    existing_review = Review.objects.filter(
+        service_request=service_request,
+        reviewer=request.user
+    ).first()
+    
+    if existing_review:
+        messages.info(request, "You have already reviewed this service.")
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        rating = int(request.POST.get('rating'))
+        comment = request.POST.get('comment', '')
+        
+        Review.objects.create(
+            service_request=service_request,
+            reviewer=request.user,
+            reviewee=service_request.offer.user,
+            rating=rating,
+            comment=comment
+        )
+        
+        # Create notification for the reviewee
+        Notification.objects.create(
+            user=service_request.offer.user,
+            notification_type='new_review',
+            title='New Review Received',
+            message=f"{request.user.username} left you a {rating}-star review!",
+            link=f'/profile/user/{service_request.offer.user.id}/'
+        )
+        
+        messages.success(request, "Review submitted successfully!")
+        return redirect('dashboard')
+    
+    return render(request, 'mainapp/add_review.html', {
+        'service_request': service_request
+    })
+
+
+# My Services Management Page
+@login_required
+def my_services_view(request):
+    my_services = ServiceOffer.objects.filter(user=request.user).order_by('-created_at')
+    
+    return render(request, 'mainapp/my_services.html', {
+        'my_services': my_services
+    })
+
+
+# Edit Service
+@login_required
+def edit_service_view(request, service_id):
+    service = get_object_or_404(ServiceOffer, id=service_id, user=request.user)
+    
+    if request.method == 'POST':
+        service.title = request.POST.get('title')
+        service.description = request.POST.get('description')
+        service.available_hours = Decimal(request.POST.get('available_hours'))
+        category_id = request.POST.get('category')
+        service.category = Category.objects.get(id=category_id)
+        service.save()
+        
+        messages.success(request, "Service updated successfully!")
+        return redirect('my_services')
+    
+    categories = Category.objects.all()
+    return render(request, 'mainapp/edit_service.html', {
+        'service': service,
+        'categories': categories
+    })
+
+
+# Delete Service
+@login_required
+def delete_service_view(request, service_id):
+    service = get_object_or_404(ServiceOffer, id=service_id, user=request.user)
+    
+    if request.method == 'POST':
+        service.delete()
+        messages.success(request, "Service deleted successfully!")
+        return redirect('my_services')
+    
+    return redirect('my_services')
+
+
+# Statistics/Analytics Page
+@login_required
+def statistics_view(request):
+    user = request.user
+    
+    # Transaction statistics
+    total_earned = TimeTransaction.objects.filter(receiver=user).aggregate(
+        total=Sum('hours'))['total'] or Decimal('0')
+    total_spent = TimeTransaction.objects.filter(sender=user).aggregate(
+        total=Sum('hours'))['total'] or Decimal('0')
+    
+    # Service statistics
+    services_offered = ServiceOffer.objects.filter(user=user).count()
+    services_requested = ServiceRequest.objects.filter(requester=user).count()
+    
+    # Request statistics
+    pending_requests = ServiceRequest.objects.filter(offer__user=user, status='Pending').count()
+    accepted_requests = ServiceRequest.objects.filter(offer__user=user, status='Accepted').count()
+    rejected_requests = ServiceRequest.objects.filter(offer__user=user, status='Rejected').count()
+    
+    # Rating statistics
+    avg_rating = Review.objects.filter(reviewee=user).aggregate(
+        avg=models.Avg('rating'))['avg'] or 0
+    total_reviews = Review.objects.filter(reviewee=user).count()
+    
+    # Recent activity
+    recent_transactions = TimeTransaction.objects.filter(
+        Q(sender=user) | Q(receiver=user)
+    ).order_by('-timestamp')[:10]
+    
+    return render(request, 'mainapp/statistics.html', {
+        'total_earned': total_earned,
+        'total_spent': total_spent,
+        'current_balance': total_earned - total_spent,
+        'services_offered': services_offered,
+        'services_requested': services_requested,
+        'pending_requests': pending_requests,
+        'accepted_requests': accepted_requests,
+        'rejected_requests': rejected_requests,
+        'avg_rating': round(avg_rating, 1) if avg_rating else 0,
+        'total_reviews': total_reviews,
+        'recent_transactions': recent_transactions
+    })
+
+
+# Help/FAQ Page
+@login_required
+def help_faq_view(request):
+    return render(request, 'mainapp/help_faq.html')
+
+
+# Public User Profile
+@login_required
+def public_user_profile_view(request, user_id):
+    viewed_user = get_object_or_404(TimeBankUser, id=user_id)
+    profile = UserProfile.objects.filter(user=viewed_user).first()
+    
+    # Get user's services
+    services = ServiceOffer.objects.filter(user=viewed_user, available_hours__gt=0)
+    
+    # Get user's reviews
+    reviews = Review.objects.filter(reviewee=viewed_user).order_by('-created_at')
+    avg_rating = reviews.aggregate(avg=models.Avg('rating'))['avg'] or 0
+    
+    return render(request, 'mainapp/public_user_profile.html', {
+        'viewed_user': viewed_user,
+        'profile': profile,
+        'services': services,
+        'reviews': reviews,
+        'avg_rating': round(avg_rating, 1) if avg_rating else 0,
+        'total_reviews': reviews.count()
+    })
+
 
 # Custom error pages
 def page_not_found(request, exception):

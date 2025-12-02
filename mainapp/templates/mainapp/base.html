@@ -173,72 +173,43 @@
                         <a href="{% url 'dashboard' %}" class="px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                             <i class="fas fa-home mr-1"></i>Dashboard
                         </a>
-                        <a href="{% url 'available_services' %}" class="px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <i class="fas fa-store mr-1"></i>Browse
+                        
+                        <!-- Services Dropdown -->
+                        <div class="relative" x-data="{ servicesOpen: false }">
+                            <button @click="servicesOpen = !servicesOpen" class="px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center">
+                                <i class="fas fa-store mr-1"></i>Services
+                                <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                            </button>
+                            <div x-show="servicesOpen" 
+                                 @click.away="servicesOpen = false"
+                                 x-transition
+                                 class="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+                                <a href="{% url 'available_services' %}" class="block px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <i class="fas fa-search mr-2 w-5"></i>Browse Services
+                                </a>
+                                <a href="{% url 'categories' %}" class="block px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <i class="fas fa-th-large mr-2 w-5"></i>Categories
+                                </a>
+                                <a href="{% url 'my_services' %}" class="block px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <i class="fas fa-briefcase mr-2 w-5"></i>My Services
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <a href="{% url 'user_directory' %}" class="px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <i class="fas fa-users mr-1"></i>Community
                         </a>
+                        
                         <a href="{% url 'offer_service' %}" class="px-3 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all">
                             <i class="fas fa-plus mr-1"></i>Offer
                         </a>
                         
                         <!-- Notifications Dropdown -->
                         <div class="relative" x-data="{ notifOpen: false }">
-                            <button @click="notifOpen = !notifOpen" class="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <a href="{% url 'notifications' %}" class="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                 <i class="fas fa-bell text-xl"></i>
-                                <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-                            </button>
-                            
-                            <!-- Notification Dropdown -->
-                            <div x-show="notifOpen" 
-                                 @click.away="notifOpen = false"
-                                 x-transition:enter="transition ease-out duration-200"
-                                 x-transition:enter-start="opacity-0 transform scale-95"
-                                 x-transition:enter-end="opacity-100 transform scale-100"
-                                 class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
-                                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-                                    <h3 class="font-bold text-lg">Notifications</h3>
-                                </div>
-                                <div class="max-h-96 overflow-y-auto">
-                                    <a href="#" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700">
-                                        <div class="flex items-start">
-                                            <div class="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mr-3">
-                                                <i class="fas fa-check text-green-600"></i>
-                                            </div>
-                                            <div class="flex-1">
-                                                <p class="text-sm font-medium">Request Accepted</p>
-                                                <p class="text-xs text-gray-500 mt-1">John accepted your service request</p>
-                                                <p class="text-xs text-gray-400 mt-1">2 hours ago</p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700">
-                                        <div class="flex items-start">
-                                            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
-                                                <i class="fas fa-message text-blue-600"></i>
-                                            </div>
-                                            <div class="flex-1">
-                                                <p class="text-sm font-medium">New Message</p>
-                                                <p class="text-xs text-gray-500 mt-1">Sarah sent you a message</p>
-                                                <p class="text-xs text-gray-400 mt-1">5 hours ago</p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                        <div class="flex items-start">
-                                            <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
-                                                <i class="fas fa-star text-purple-600"></i>
-                                            </div>
-                                            <div class="flex-1">
-                                                <p class="text-sm font-medium">New Review</p>
-                                                <p class="text-xs text-gray-500 mt-1">You received a 5-star review!</p>
-                                                <p class="text-xs text-gray-400 mt-1">1 day ago</p>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="p-3 bg-gray-50 dark:bg-gray-700 text-center">
-                                    <a href="#" class="text-sm text-purple-600 hover:text-purple-700 font-medium">View all notifications</a>
-                                </div>
-                            </div>
+                                <!-- Notification badge can be added here dynamically -->
+                            </a>
                         </div>
                         
                         <!-- Dark Mode Toggle -->
@@ -272,15 +243,23 @@
                                         <i class="fas fa-user w-5"></i>
                                         <span class="ml-2">My Profile</span>
                                     </a>
-                                    <a href="#" class="flex items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                        <i class="fas fa-cog w-5"></i>
-                                        <span class="ml-2">Settings</span>
+                                    <a href="{% url 'my_services' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <i class="fas fa-briefcase w-5"></i>
+                                        <span class="ml-2">My Services</span>
                                     </a>
-                                    <a href="#" class="flex items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <a href="{% url 'transaction_history' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <i class="fas fa-history w-5"></i>
+                                        <span class="ml-2">Transactions</span>
+                                    </a>
+                                    <a href="{% url 'statistics' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700">
                                         <i class="fas fa-chart-line w-5"></i>
                                         <span class="ml-2">My Stats</span>
                                     </a>
-                                    <a href="#" class="flex items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <a href="{% url 'inbox' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <i class="fas fa-envelope w-5"></i>
+                                        <span class="ml-2">Messages</span>
+                                    </a>
+                                    <a href="{% url 'help_faq' %}" class="flex items-center px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700">
                                         <i class="fas fa-question-circle w-5"></i>
                                         <span class="ml-2">Help Center</span>
                                     </a>

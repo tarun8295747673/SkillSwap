@@ -1,0 +1,213 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}Help & FAQ - SkillSwap{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8 text-center">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                <i class="fas fa-question-circle text-purple-600 mr-3"></i>Help & FAQ
+            </h1>
+            <p class="text-gray-600 dark:text-gray-400">Everything you need to know about SkillSwap</p>
+        </div>
+
+        <!-- How It Works Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-8 border border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">How SkillSwap Works</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-user-plus text-purple-600 dark:text-purple-400 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2">1. Sign Up</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Create your free account and get 2 hours of time credits as a welcome bonus</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-hand-holding text-blue-600 dark:text-blue-400 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2">2. Offer Services</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Share your skills and earn time credits by helping others</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-sync-alt text-green-600 dark:text-green-400 text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2">3. Exchange</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Use your earned credits to request services from others</p>
+                </div>
+            </div>
+
+            <div class="bg-purple-50 dark:bg-purple-900/20 border-l-4 border-purple-600 p-4 rounded">
+                <p class="text-sm text-gray-700 dark:text-gray-300">
+                    <strong>Key Principle:</strong> One hour of time = One time credit, regardless of the service. 
+                    Everyone's time is valued equally in our community!
+                </p>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
+            
+            <div x-data="{ activeAccordion: null }" class="space-y-4">
+                <!-- FAQ 1 -->
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    <button @click="activeAccordion = activeAccordion === 1 ? null : 1" 
+                            class="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                        <span class="font-semibold text-gray-900 dark:text-white">What is a Time Bank?</span>
+                        <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': activeAccordion === 1 }"></i>
+                    </button>
+                    <div x-show="activeAccordion === 1" 
+                         x-transition
+                         class="p-4 bg-white dark:bg-gray-800">
+                        <p class="text-gray-600 dark:text-gray-400">
+                            A time bank is a reciprocity-based work trading system where everyone's time is valued equally. 
+                            Members exchange services using time as currency. One hour of work = one time credit, 
+                            regardless of what service is provided.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    <button @click="activeAccordion = activeAccordion === 2 ? null : 2" 
+                            class="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                        <span class="font-semibold text-gray-900 dark:text-white">How do I earn time credits?</span>
+                        <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': activeAccordion === 2 }"></i>
+                    </button>
+                    <div x-show="activeAccordion === 2" 
+                         x-transition
+                         class="p-4 bg-white dark:bg-gray-800">
+                        <p class="text-gray-600 dark:text-gray-400 mb-2">You can earn time credits by:</p>
+                        <ul class="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400">
+                            <li>Signing up (2 hours welcome bonus)</li>
+                            <li>Daily login (2 hours per day)</li>
+                            <li>Offering services to other members</li>
+                            <li>Completing service requests</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    <button @click="activeAccordion = activeAccordion === 3 ? null : 3" 
+                            class="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                        <span class="font-semibold text-gray-900 dark:text-white">How do I request a service?</span>
+                        <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': activeAccordion === 3 }"></i>
+                    </button>
+                    <div x-show="activeAccordion === 3" 
+                         x-transition
+                         class="p-4 bg-white dark:bg-gray-800">
+                        <p class="text-gray-600 dark:text-gray-400 mb-2">To request a service:</p>
+                        <ol class="list-decimal list-inside space-y-1 text-gray-600 dark:text-gray-400">
+                            <li>Browse available services or search by category</li>
+                            <li>Click on a service you're interested in</li>
+                            <li>Enter the number of hours you need</li>
+                            <li>Submit your request and wait for acceptance</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    <button @click="activeAccordion = activeAccordion === 4 ? null : 4" 
+                            class="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                        <span class="font-semibold text-gray-900 dark:text-white">What types of services can I offer?</span>
+                        <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': activeAccordion === 4 }"></i>
+                    </button>
+                    <div x-show="activeAccordion === 4" 
+                         x-transition
+                         class="p-4 bg-white dark:bg-gray-800">
+                        <p class="text-gray-600 dark:text-gray-400 mb-2">
+                            You can offer virtually any skill or service! Common categories include:
+                        </p>
+                        <ul class="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400">
+                            <li>Teaching & Tutoring (languages, music, academics)</li>
+                            <li>Tech Support (computer repair, web design)</li>
+                            <li>Home Services (gardening, cleaning, repairs)</li>
+                            <li>Professional Services (writing, design, consulting)</li>
+                            <li>Creative Services (photography, art, crafts)</li>
+                            <li>And many more!</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- FAQ 5 -->
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    <button @click="activeAccordion = activeAccordion === 5 ? null : 5" 
+                            class="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                        <span class="font-semibold text-gray-900 dark:text-white">Can I convert time credits to real money?</span>
+                        <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': activeAccordion === 5 }"></i>
+                    </button>
+                    <div x-show="activeAccordion === 5" 
+                         x-transition
+                         class="p-4 bg-white dark:bg-gray-800">
+                        <p class="text-gray-600 dark:text-gray-400">
+                            No, time credits cannot be converted to real money. SkillSwap operates on a pure time-exchange basis. 
+                            The value is in the services you receive and the community connections you build, not monetary gain.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 6 -->
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    <button @click="activeAccordion = activeAccordion === 6 ? null : 6" 
+                            class="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                        <span class="font-semibold text-gray-900 dark:text-white">What happens if I run out of time credits?</span>
+                        <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': activeAccordion === 6 }"></i>
+                    </button>
+                    <div x-show="activeAccordion === 6" 
+                         x-transition
+                         class="p-4 bg-white dark:bg-gray-800">
+                        <p class="text-gray-600 dark:text-gray-400">
+                            You can always earn more time credits by offering your services to others! 
+                            Additionally, you receive 2 time credits for logging in daily. 
+                            The community thrives on reciprocity - give your time to receive time.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 7 -->
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    <button @click="activeAccordion = activeAccordion === 7 ? null : 7" 
+                            class="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                        <span class="font-semibold text-gray-900 dark:text-white">How do reviews work?</span>
+                        <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': activeAccordion === 7 }"></i>
+                    </button>
+                    <div x-show="activeAccordion === 7" 
+                         x-transition
+                         class="p-4 bg-white dark:bg-gray-800">
+                        <p class="text-gray-600 dark:text-gray-400">
+                            After a service is completed and accepted, you can leave a review for the service provider. 
+                            Reviews help build trust in the community and recognize quality service. 
+                            You can rate from 1-5 stars and leave an optional comment.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Support -->
+        <div class="bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl p-8 text-white text-center mt-8">
+            <h2 class="text-2xl font-bold mb-4">Still Have Questions?</h2>
+            <p class="text-purple-100 mb-6">Our support team is here to help you!</p>
+            <div class="flex items-center justify-center space-x-4">
+                <a href="mailto:support@skillswap.com" 
+                   class="bg-white text-purple-600 px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors font-semibold">
+                    <i class="fas fa-envelope mr-2"></i>Email Support
+                </a>
+                <a href="{% url 'dashboard' %}" 
+                   class="bg-purple-800 text-white px-6 py-3 rounded-lg hover:bg-purple-900 transition-colors font-semibold">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

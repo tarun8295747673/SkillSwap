@@ -1,0 +1,44 @@
+{% extends 'mainapp/base.html' %}
+
+{% block title %}Categories - SkillSwap{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+                <i class="fas fa-th-large text-purple-600 mr-3"></i>Browse by Category
+            </h1>
+            <p class="text-gray-600 dark:text-gray-400">Discover skills and services organized by category</p>
+        </div>
+
+        <!-- Categories Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for item in category_data %}
+            <a href="{% url 'category_detail' item.category.id %}" 
+               class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-folder text-white text-xl"></i>
+                    </div>
+                    <span class="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-3 py-1 rounded-full text-sm font-semibold">
+                        {{ item.service_count }} service{{ item.service_count|pluralize }}
+                    </span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ item.category.category_name }}</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">{{ item.category.description }}</p>
+                <div class="mt-4 flex items-center text-purple-600 dark:text-purple-400 font-semibold">
+                    Browse Services <i class="fas fa-arrow-right ml-2"></i>
+                </div>
+            </a>
+            {% empty %}
+            <div class="col-span-3 text-center py-12">
+                <i class="fas fa-folder-open text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                <p class="text-gray-500 dark:text-gray-400 text-lg">No categories available yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

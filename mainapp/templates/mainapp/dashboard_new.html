@@ -3,25 +3,84 @@
 {% block title %}Dashboard - TimeBank{% endblock %}
 
 {% block content %}
-<div class="bg-gray-50 dark:bg-gray-900 min-h-screen py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <!-- Welcome Header -->
-        <div class="mb-8 animate-fade-in">
-            <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-8 text-white shadow-2xl">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
-                    <div>
-                        <h1 class="text-4xl font-bold mb-2">
-                            <span id="greeting">Welcome</span>, {{ user.username }}! 👋
-                        </h1>
-                        <p class="text-blue-100">Ready to exchange some time today?</p>
+<div class="bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen">
+    
+    <!-- Top Navigation Stats Bar -->
+    <div class="bg-white dark:bg-gray-800 shadow-lg border-b dark:border-gray-700 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between overflow-x-auto">
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                            {{ user.username|slice:":1"|upper }}
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-gray-900 dark:text-white">{{ user.username }}</p>
+                            <p class="text-xs text-gray-500" id="currentTime"></p>
+                        </div>
                     </div>
-                    <div class="mt-4 md:mt-0">
-                        <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-2xl px-6 py-4 text-center">
-                            <p class="text-sm text-blue-100 mb-1">Your Time Balance</p>
-                            <p class="text-4xl font-bold {% if total_balance >= 0 %}text-yellow-300{% else %}text-red-300{% endif %}">
-                                {{ total_balance }} hrs
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="text-center px-4 border-r dark:border-gray-600">
+                        <p class="text-2xl font-bold {% if total_balance >= 0 %}text-green-600{% else %}text-red-600{% endif %}">{{ total_balance }}</p>
+                        <p class="text-xs text-gray-500">Time Balance</p>
+                    </div>
+                    <div class="text-center px-4 border-r dark:border-gray-600">
+                        <p class="text-2xl font-bold text-blue-600">{{ offer_service|length }}</p>
+                        <p class="text-xs text-gray-500">My Services</p>
+                    </div>
+                    <div class="text-center px-4 border-r dark:border-gray-600">
+                        <p class="text-2xl font-bold text-purple-600">{{ service_request|length }}</p>
+                        <p class="text-xs text-gray-500">My Requests</p>
+                    </div>
+                    <div class="text-center px-4">
+                        <p class="text-2xl font-bold text-orange-600">{{ incoming_requests|length }}</p>
+                        <p class="text-xs text-gray-500">Incoming</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Hero Welcome Card with Gradient -->
+        <div class="mb-8 animate-fade-in">
+            <div class="relative bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-8 shadow-2xl overflow-hidden">
+                <!-- Animated Background Pattern -->
+                <div class="absolute inset-0 opacity-20">
+                    <div class="absolute top-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl animate-pulse"></div>
+                    <div class="absolute bottom-0 right-0 w-96 h-96 bg-blue-300 rounded-full blur-3xl animate-pulse animation-delay-2000"></div>
+                </div>
+                
+                <div class="relative z-10">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                        <div class="mb-4 md:mb-0">
+                            <h1 class="text-5xl font-extrabold text-white mb-2 flex items-center">
+                                <span id="greeting">Welcome</span>, {{ user.username }}!
+                                <span class="ml-3 animate-bounce">👋</span>
+                            </h1>
+                            <p class="text-white text-lg opacity-90">Ready to make a difference in your community today?</p>
+                            <div class="flex items-center space-x-4 mt-4">
+                                <a href="{% url 'offer_service' %}" class="bg-white text-indigo-600 px-6 py-3 rounded-xl font-bold hover:shadow-xl transition-all hover:scale-105">
+                                    <i class="fas fa-plus-circle mr-2"></i>Offer Service
+                                </a>
+                                <a href="{% url 'available_services' %}" class="bg-indigo-800 bg-opacity-50 text-white px-6 py-3 rounded-xl font-bold hover:bg-opacity-70 transition-all">
+                                    <i class="fas fa-search mr-2"></i>Browse Services
+                                </a>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-20 backdrop-blur-xl rounded-2xl px-8 py-6 text-center border border-white border-opacity-30">
+                            <p class="text-sm text-white opacity-90 mb-2">Your Time Balance</p>
+                            <p class="text-6xl font-black {% if total_balance >= 0 %}text-yellow-300{% else %}text-red-300{% endif %} mb-1">
+                                {{ total_balance }}
                             </p>
+                            <p class="text-white text-sm opacity-75">hours</p>
+                            <div class="mt-4 flex items-center justify-center space-x-2">
+                                <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                                <span class="text-white text-xs">Active Member</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -32,9 +91,9 @@
         {% if messages %}
             <div class="mb-6 space-y-3 animate-slide-up">
                 {% for message in messages %}
-                    <div class="bg-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-50 dark:bg-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-900 border-l-4 border-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-500 p-4 rounded-lg">
+                    <div class="bg-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-50 dark:bg-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-900 border-l-4 border-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-500 p-4 rounded-lg shadow-md">
                         <div class="flex items-center">
-                            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %} text-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-500 mr-3"></i>
+                            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %} text-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-500 mr-3 text-xl"></i>
                             <p class="text-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-700 dark:text-{% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}blue{% endif %}-200">{{ message }}</p>
                         </div>
                     </div>
@@ -42,53 +101,108 @@
             </div>
         {% endif %}
 
-        <!-- Quick Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 animate-slide-up">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 card-shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Services Offered</p>
-                        <p class="text-3xl font-bold text-blue-600">{{ offer_service|length }}</p>
+        <!-- Enhanced Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-slide-up">
+            <!-- Services Offered Card -->
+            <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 card-shadow hover:shadow-2xl transition-all hover:-translate-y-1 border-l-4 border-blue-500">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                        <i class="fas fa-briefcase text-white text-2xl"></i>
                     </div>
-                    <div class="w-14 h-14 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-briefcase text-blue-600 text-2xl"></i>
-                    </div>
+                    <span class="text-4xl font-black text-blue-600">{{ offer_service|length }}</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 font-semibold">Services Offered</p>
+                <p class="text-xs text-gray-500 mt-1">Active listings on platform</p>
+                <div class="mt-3 pt-3 border-t dark:border-gray-700">
+                    <a href="{% url 'my_services' %}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                        Manage <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 card-shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Service Requests</p>
-                        <p class="text-3xl font-bold text-purple-600">{{ service_request|length }}</p>
+            <!-- Service Requests Card -->
+            <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 card-shadow hover:shadow-2xl transition-all hover:-translate-y-1 border-l-4 border-purple-500">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                        <i class="fas fa-hand-paper text-white text-2xl"></i>
                     </div>
-                    <div class="w-14 h-14 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-hand-paper text-purple-600 text-2xl"></i>
-                    </div>
+                    <span class="text-4xl font-black text-purple-600">{{ service_request|length }}</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 font-semibold">Service Requests</p>
+                <p class="text-xs text-gray-500 mt-1">Pending service requests</p>
+                <div class="mt-3 pt-3 border-t dark:border-gray-700">
+                    <a href="{% url 'all_requests' %}" class="text-purple-600 hover:text-purple-700 text-sm font-medium">
+                        View All <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 card-shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Incoming Requests</p>
-                        <p class="text-3xl font-bold text-orange-600">{{ incoming_requests|length }}</p>
+            <!-- Incoming Requests Card -->
+            <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 card-shadow hover:shadow-2xl transition-all hover:-translate-y-1 border-l-4 border-orange-500">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                        <i class="fas fa-inbox text-white text-2xl"></i>
                     </div>
-                    <div class="w-14 h-14 bg-orange-100 dark:bg-orange-900 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-inbox text-orange-600 text-2xl"></i>
-                    </div>
+                    <span class="text-4xl font-black text-orange-600">{{ incoming_requests|length }}</span>
                 </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 font-semibold">Incoming Requests</p>
+                <p class="text-xs text-gray-500 mt-1">People need your skills</p>
+                {% if incoming_requests %}
+                    <div class="mt-3 pt-3 border-t dark:border-gray-700">
+                        <span class="bg-orange-100 dark:bg-orange-900 text-orange-600 px-2 py-1 rounded-full text-xs font-bold animate-pulse">
+                            Action Required
+                        </span>
+                    </div>
+                {% endif %}
             </div>
 
-            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 card-shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Messages</p>
-                        <p class="text-3xl font-bold text-green-600">{{ received_messages|length }}</p>
+            <!-- Messages Card -->
+            <div class="group bg-white dark:bg-gray-800 rounded-2xl p-6 card-shadow hover:shadow-2xl transition-all hover:-translate-y-1 border-l-4 border-green-500">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                        <i class="fas fa-envelope text-white text-2xl"></i>
                     </div>
-                    <div class="w-14 h-14 bg-green-100 dark:bg-green-900 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-envelope text-green-600 text-2xl"></i>
-                    </div>
+                    <span class="text-4xl font-black text-green-600">{{ received_messages|length }}</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 font-semibold">Messages</p>
+                <p class="text-xs text-gray-500 mt-1">Unread conversations</p>
+                <div class="mt-3 pt-3 border-t dark:border-gray-700">
+                    <a href="{% url 'inbox' %}" class="text-green-600 hover:text-green-700 text-sm font-medium">
+                        Open Inbox <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Timeline -->
+        <div class="mb-8 bg-white dark:bg-gray-800 rounded-2xl p-6 card-shadow">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold flex items-center">
+                    <i class="fas fa-chart-line text-indigo-500 mr-3"></i>
+                    Your Activity
+                </h2>
+                <select class="px-4 py-2 border dark:border-gray-600 rounded-lg text-sm dark:bg-gray-700 dark:text-white">
+                    <option>Last 7 Days</option>
+                    <option>Last 30 Days</option>
+                    <option>All Time</option>
+                </select>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 rounded-xl">
+                    <i class="fas fa-clock text-blue-600 text-4xl mb-3"></i>
+                    <p class="text-3xl font-black text-blue-600">{{ total_balance|default:"0" }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 font-medium">Hours Balance</p>
+                </div>
+                <div class="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900 dark:to-green-800 rounded-xl">
+                    <i class="fas fa-handshake text-green-600 text-4xl mb-3"></i>
+                    <p class="text-3xl font-black text-green-600">{{ time_entries|length|default:"0" }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 font-medium">Total Exchanges</p>
+                </div>
+                <div class="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900 dark:to-purple-800 rounded-xl">
+                    <i class="fas fa-star text-purple-600 text-4xl mb-3"></i>
+                    <p class="text-3xl font-black text-purple-600">4.8</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 font-medium">Average Rating</p>
                 </div>
             </div>
         </div>
@@ -539,11 +653,39 @@ function processAssistant() {
 // Initialize on page load
 window.onload = function () {
     setGreeting();
-    if (!localStorage.getItem("greeted_once")) {
+    updateCurrentTime();
+    setInterval(updateCurrentTime, 1000);
+    
+    if (!localStorage.getItem("greeted_today")) {
         launchAnimatedConfetti();
-        greetUserWithVoice();
-        localStorage.setItem("greeted_once", "true");
+        setTimeout(() => greetUserWithVoice(), 500);
+        localStorage.setItem("greeted_today", new Date().toDateString());
+    }
+    
+    // Check if greeting expired (new day)
+    if (localStorage.getItem("greeted_today") !== new Date().toDateString()) {
+        localStorage.removeItem("greeted_today");
     }
 };
+
+// Update current time display
+function updateCurrentTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        second: '2-digit'
+    });
+    const dateString = now.toLocaleDateString('en-US', { 
+        weekday: 'short', 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+    });
+    const element = document.getElementById('currentTime');
+    if (element) {
+        element.textContent = `${dateString} • ${timeString}`;
+    }
+}
 </script>
 {% endblock %}
